@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class MText extends JFrame {    
+    static String slash;
     static JFrame frame = new JFrame("MText");
     static int lang;
     static String lineWrap;
@@ -20,6 +21,9 @@ public class MText extends JFrame {
     static TextFilePanel[] tabs = new TextFilePanel[64];
     MText() {}    
     public static void main(String args[]) {
+        final String system = System.getProperty("os.name");
+        if (system.compareTo("Linux") == 0) slash = "/";
+        else if (system.contains("Windows")) slash = "\\";
         loadLanguage();
         loadTabs();
         loadWrap();
@@ -83,7 +87,7 @@ public class MText extends JFrame {
     }   
     static void loadLanguage() {
         try {
-            File file = new File("conf\\language.txt");
+            File file = new File("conf" + slash + "language.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -108,7 +112,7 @@ public class MText extends JFrame {
     }
     static void loadWrap() {
         try {
-            File file = new File("conf\\wraplines.txt");
+            File file = new File("conf" + slash + "wraplines.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -151,7 +155,7 @@ public class MText extends JFrame {
     }
     static void loadTabs() {
         try {
-            File file = new File("conf\\tabsize.txt");
+            File file = new File("conf" + slash + "tabsize.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {

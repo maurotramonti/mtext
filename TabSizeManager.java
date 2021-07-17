@@ -20,7 +20,7 @@ class TabSizeManager extends MText implements ActionListener {
         try {
             String s = (String) JOptionPane.showInputDialog(frame, "Choose tabs lenght: ", "Alert", JOptionPane.PLAIN_MESSAGE, null, len, tabSize);
             if (s != null) {
-                File file = new File("conf\\tabsize.txt");
+                File file = new File("conf" + slash + "tabsize.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 br.write(s);

@@ -18,7 +18,7 @@ class LanguageManager extends MText implements ActionListener {
         try {
             String s = (String) JOptionPane.showInputDialog(frame, "Choose language (requests reboot): ", "Alert", JOptionPane.PLAIN_MESSAGE, null, langs, clg);
             if (s != null) {
-                File file = new File("conf\\language.txt");
+                File file = new File("conf" + slash + "language.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 br.write(s);
