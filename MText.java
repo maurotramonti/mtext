@@ -26,18 +26,20 @@ public class MText extends JFrame {
         frame.setSize(800, 600);
 
         final String system = System.getProperty("os.name");
-        if (system.compareTo("Linux") == 0 && args[0].equals("dev") == false)  {
-            slash = "/";
-            prepath = "/etc/mtext/";
-        }
-        else if (system.equals("Linux") && args[0].equals("dev")) {
-            slash = "/";
-            prepath = "";
-        }
-        else if (system.contains("Windows")) {
-            slash = "\\";
-            prepath = "";
-        }
+        try {
+            if (system.compareTo("Linux") == 0 && args[0].equals("dev") == false)  {
+                slash = "/";
+                prepath = "/etc/mtext/";
+            }
+            else if (system.equals("Linux") && args[0].equals("dev")) {
+                slash = "/";
+                prepath = "";
+            }
+            else if (system.contains("Windows")) {
+                slash = "\\";
+                prepath = "";
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {};
         loadLanguage();
         loadTabs();
         loadWrap();
