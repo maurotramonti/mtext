@@ -16,9 +16,9 @@ class LanguageManager extends MText implements ActionListener {
         else if(lang == 1) clg = new String("Italiano");
         else clg = new String("none");
         try {
-            String s = (String) JOptionPane.showInputDialog(frame, "Choose language (requests reboot): ", "Alert", JOptionPane.PLAIN_MESSAGE, null, langs, clg);
+            String s = (String) JOptionPane.showInputDialog(frame, lm.getTranslatedString(16, lang), lm.getTranslatedString(10, lang), JOptionPane.PLAIN_MESSAGE, null, langs, clg);
             if (s != null) {
-                File file = new File("conf" + slash + "language.txt");
+                File file = new File(prepath + "conf" + slash + "language.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 br.write(s);
@@ -26,7 +26,7 @@ class LanguageManager extends MText implements ActionListener {
             }
         }
         catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame, "Error: you should run me as administrator to modify the settings.");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(15, lang));
             return;
         }
     }
@@ -63,7 +63,6 @@ class LanguageManager extends MText implements ActionListener {
         return tmp;
     }
     public String getTranslatedString(int value, int lang) {
-        assert(value >= 0 && value <= 5);
         switch(value) {
             case 0:
                 if (lang == 0) return "Preferences";
@@ -76,15 +75,53 @@ class LanguageManager extends MText implements ActionListener {
                 if (lang == 0) return "Would you save the file?";
                 else if (lang == 1) return "Salvare le modifiche al file?";
             case 3:
-                if (lang == 0) return "MText, build 270621\nAuthor: Mauro Tramonti";
-                else if (lang == 1) return "MText, build 270621\nAutore: Mauro Tramonti";
+                if (lang == 0) return "MText, build 180721\nAuthor: Mauro Tramonti";
+                else if (lang == 1) return "MText, build 180721\nAutore: Mauro Tramonti";
             case 4:
                 if (lang == 0) return "Edit";
                 else if (lang == 1) return "Modifica";
             case 5:
                 if (lang == 0) return "Help";
                 else if (lang == 1) return "Aiuto";
-
+            case 6:
+                if (lang == 0) return "There are some files unsaved. Would you like to save them?";
+                else if (lang == 1) return "Sono presenti file non salvati. Vuoi salvarli?";
+            case 7:
+                if (lang == 0) return "Tab size: ";
+                else if (lang == 1) return "Larghezza tabulazione: ";
+            case 8:
+                if (lang == 0) return "Row: ";
+                else if (lang == 1) return "Riga: ";
+            case 9:
+                if (lang == 0) return "Column: ";
+                else if (lang == 1) return "Colonna: ";
+            case 10:
+                if (lang == 0) return "Warning";
+                else if (lang == 1) return "Attenzione";
+            case 11:
+                if (lang == 0) return "You opened too many tabs!";
+                else if (lang == 1) return "Hai aperto troppe schede!";
+            case 12:
+                if (lang == 0) return "An error occurred while reading the file!";
+                else if (lang == 1) return "Si è verificato un errore durante l'apertura del file.";
+            case 13:
+                if (lang == 0) return "An error occurred while saving the file!";
+                else if (lang == 1) return "Si è verificato un errore durante il salvataggio del file!";
+            case 14:
+                if (lang == 0) return "Activate or deactivate automatic newline: ";
+                else if (lang == 1) return "Attiva o disattiva il ritorno a capo automatico: ";
+            case 15:
+                if (lang == 0) return "Error: you should run me as administrator to modify the settings.";
+                else if (lang == 1) return "Errore: è necessario eseguire come amministratore per modificare le impostazioni";
+            case 16:
+                if (lang == 0) return "Choose language (requests reboot): ";
+                else if (lang == 1) return "Seleziona lingua (richiede riavvio): ";
+            case 17:
+                if (lang == 0) return "Choose tabs lenght: ";
+                else if (lang == 1) return "Seleziona larghezza tabulazione: ";
+            case 18:
+                if (lang == 0) return "An error occurred while loading a setting file.";
+                else if (lang == 1) return "Si è verificato un errore durante il caricamento di un file di impostazioni.";
         }
         String tmp = "none";
         return tmp;

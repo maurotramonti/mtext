@@ -18,9 +18,9 @@ class TabSizeManager extends MText implements ActionListener {
         else if(tabSize == 8) ctb = new String ("8 spaces");
         else ctb = new String("none");
         try {
-            String s = (String) JOptionPane.showInputDialog(frame, "Choose tabs lenght: ", "Alert", JOptionPane.PLAIN_MESSAGE, null, len, tabSize);
+            String s = (String) JOptionPane.showInputDialog(frame, lm.getTranslatedString(17, lang), lm.getTranslatedString(10, lang), JOptionPane.PLAIN_MESSAGE, null, len, tabSize);
             if (s != null) {
-                File file = new File("conf" + slash + "tabsize.txt");
+                File file = new File(prepath + "conf" + slash + "tabsize.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 br.write(s);
@@ -28,7 +28,7 @@ class TabSizeManager extends MText implements ActionListener {
             }
         }
         catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame, "Error: you should run me as administrator to modify the settings.");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(15, lang)); // only Windows
             return;
         }
         loadTabs();

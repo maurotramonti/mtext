@@ -15,6 +15,7 @@ class TextFilePanel extends JScrollPane {
         this.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         getTextArea().setTabSize(tabSize);
         getTextArea().getDocument().addDocumentListener(new TAListener());
+        getTextArea().addCaretListener(new CustomCaretListener());
     }
 
     public JTextArea getTextArea() {

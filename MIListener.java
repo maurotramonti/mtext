@@ -15,7 +15,7 @@ class MIListener extends MText implements ActionListener {
         }     
         else if (e.getActionCommand().equals("Close")) {
             if (tabs[tPane.getSelectedIndex()].getIfIsModified()) {
-                int n = JOptionPane.showConfirmDialog(frame, "The file selected is not saved. Would you like to save it?", "Warning", JOptionPane.YES_NO_OPTION);
+                int n = JOptionPane.showConfirmDialog(frame, lm.getTranslatedString(2, lang), lm.getTranslatedString(10, lang), JOptionPane.YES_NO_OPTION);
                 if (n == JOptionPane.YES_OPTION) {
                     if (tabs[tPane.getSelectedIndex()].getFilePath().equals("none")) {
                         JFileChooser fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -31,7 +31,7 @@ class MIListener extends MText implements ActionListener {
         }
         else if (e.getActionCommand().equals("New")) {
             if (tPane.getSelectedIndex() == 63) {
-                JOptionPane.showMessageDialog(frame, "You opened too many tabs!");
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(11, lang));
                 return;
             }
             tabs[tPane.getSelectedIndex() + 1] = new TextFilePanel(null, "none", tabSize);
@@ -41,7 +41,7 @@ class MIListener extends MText implements ActionListener {
         }
         else if (e.getActionCommand().equals("Open")) {
             if (tPane.getSelectedIndex() == 63) {
-                JOptionPane.showMessageDialog(frame, "You opened too many tabs!");
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(11, lang));
                 return;
             }
             JFileChooser fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -95,7 +95,7 @@ class MIListener extends MText implements ActionListener {
             frame.setTitle("MText - " + tabs[tPane.getSelectedIndex()].getFilePath());
         }
         catch(IOException ex) {
-            JOptionPane.showMessageDialog(frame, "An error occurred while reading the file!");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(12, lang));
         }                  
     }
     public void saveFile(String path) {
@@ -111,7 +111,7 @@ class MIListener extends MText implements ActionListener {
             frame.setTitle("MText - " + tabs[tPane.getSelectedIndex()].getFilePath());
         }
         catch(IOException ex) {
-            JOptionPane.showMessageDialog(frame, "An error occurred while saving the file!");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(13, lang));
         }                  
     }
 }

@@ -19,7 +19,7 @@ class CustomWindowListener extends MText implements WindowListener {
             }
         }
         if (aFileModified) {
-            int r = JOptionPane.showConfirmDialog(frame, "There are some files unsaved. Would you like to save them?", "Warning", JOptionPane.YES_NO_OPTION);
+            int r = JOptionPane.showConfirmDialog(frame, lm.getTranslatedString(6, lang), lm.getTranslatedString(10, lang), JOptionPane.YES_NO_OPTION);
             if (r == JOptionPane.YES_OPTION) return;
             else if (r == JOptionPane.NO_OPTION) System.exit(0);
         }

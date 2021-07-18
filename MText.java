@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class MText extends JFrame {    
     static String slash;
+    static String prepath;
     static JFrame frame = new JFrame("MText");
     static int lang;
     static String lineWrap;
@@ -19,14 +20,28 @@ public class MText extends JFrame {
     static WrapLineSetting ws = new WrapLineSetting();
     static JTabbedPane tPane = new JTabbedPane();
     static TextFilePanel[] tabs = new TextFilePanel[64];
+    static StatusBar sb = new StatusBar(frame);
     MText() {}    
     public static void main(String args[]) {
+        frame.setSize(800, 600);
+
         final String system = System.getProperty("os.name");
-        if (system.compareTo("Linux") == 0) slash = "/";
-        else if (system.contains("Windows")) slash = "\\";
+        if (system.compareTo("Linux") == 0 && args[0].equals("dev") == false)  {
+            slash = "/";
+            prepath = "/etc/mtext/";
+        }
+        else if (system.equals("Linux") && args[0].equals("dev")) {
+            slash = "/";
+            prepath = "";
+        }
+        else if (system.contains("Windows")) {
+            slash = "\\";
+            prepath = "";
+        }
         loadLanguage();
         loadTabs();
         loadWrap();
+        
         tabs[0] = new TextFilePanel(null, "none", tabSize);
 
         frame.setTitle("MText - " + lm.getTranslatedString(1, lang));
@@ -83,11 +98,12 @@ public class MText extends JFrame {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new CustomWindowListener());
         frame.getContentPane().add(tPane);
+        frame.getContentPane().add(sb, BorderLayout.SOUTH);
         frame.setVisible(true);
     }   
     static void loadLanguage() {
         try {
-            File file = new File("conf" + slash + "language.txt");
+            File file = new File(prepath + "conf" + slash + "language.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -98,21 +114,22 @@ public class MText extends JFrame {
             if (l.equals("Italiano")) lang = 1;
             else if (l.equals("English")) lang = 0;
             else {
-                JOptionPane.showMessageDialog(frame, "There was an error while loading language file.");
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
                 lm.actionPerformed(null);
                 loadLanguage();
             }
         }
         catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(frame, "There was an error while loading language file.");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
             lm.actionPerformed(null);
             loadLanguage();
         }
+        sb.setSbLanguage(lang);
     }
     static void loadWrap() {
         try {
-            File file = new File("conf" + slash + "wraplines.txt");
+            File file = new File(prepath + "conf" + slash + "wraplines.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -141,21 +158,21 @@ public class MText extends JFrame {
                 }
             }
             else {
-                JOptionPane.showMessageDialog(frame, "There was an error while loading the file.");
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
                 ws.actionPerformed(null);
                 loadWrap();
             }
         }
         catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(frame, "There was an error while loading the file.");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
             ws.actionPerformed(null);
             loadWrap();
         }
     }
     static void loadTabs() {
         try {
-            File file = new File("conf" + slash + "tabsize.txt");
+            File file = new File(prepath + "conf" + slash + "tabsize.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -165,6 +182,7 @@ public class MText extends JFrame {
             l = scanner.nextLine();
             if (l.equals("2 spaces")) {
                 tabSize = 2;
+                sb.setSbTabSize(tabSize);
                 for(TextFilePanel tp : tabs) {
                     try {
                         tp.getTextArea().setTabSize(2);
@@ -175,6 +193,7 @@ public class MText extends JFrame {
             }
             else if (l.equals("4 spaces")) {
                 tabSize = 4;
+                sb.setSbTabSize(tabSize);
                 for(TextFilePanel tp : tabs) {
                     try {
                         tp.getTextArea().setTabSize(4);
@@ -185,6 +204,7 @@ public class MText extends JFrame {
             }
             else if (l.equals("8 spaces")) {
                 tabSize = 8;
+                sb.setSbTabSize(tabSize);
                 for(TextFilePanel tp : tabs) {
                     try {
                         tp.getTextArea().setTabSize(8);
@@ -194,17 +214,18 @@ public class MText extends JFrame {
                 }
             }
             else {
-                JOptionPane.showMessageDialog(frame, "There was an error while loading the file.");
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
                 tm.actionPerformed(null);
                 loadTabs();
             }
         }
         catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(frame, "There was an error while loading the file.");
+            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
             tm.actionPerformed(null);
             loadTabs();
         }
+
     }    
 }
 
