@@ -7,7 +7,7 @@ MText è un editor di testo basilare scritto in Java utilizzando la libreria gra
 Per compilare i sorgenti è necessario il Java Development Kit.
 
     javac *.java  
-    java MText
+    java MText regular
 
 ## Installazione permanente
 
