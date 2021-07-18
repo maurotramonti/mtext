@@ -11,7 +11,7 @@ Per compilare i sorgenti è necessario il Java Development Kit.
 
 ## Installazione permanente
 
-Le release complete di installer per Windows sono disponibile in questo repository.
+Le release complete di installer per Windows sono disponibile in questo repository, così come i pacchetti Debian.
 
 ## Immagini
 
