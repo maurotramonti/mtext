@@ -75,8 +75,8 @@ class LanguageManager extends MText implements ActionListener {
                 if (lang == 0) return "Would you save the file?";
                 else if (lang == 1) return "Salvare le modifiche al file?";
             case 3:
-                if (lang == 0) return "MText, build 180721\nAuthor: Mauro Tramonti";
-                else if (lang == 1) return "MText, build 180721\nAutore: Mauro Tramonti";
+                if (lang == 0) return "MText, build 190721\nAuthor: Mauro Tramonti";
+                else if (lang == 1) return "MText, build 190721\nAutore: Mauro Tramonti";
             case 4:
                 if (lang == 0) return "Edit";
                 else if (lang == 1) return "Modifica";
@@ -122,6 +122,9 @@ class LanguageManager extends MText implements ActionListener {
             case 18:
                 if (lang == 0) return "An error occurred while loading a setting file.";
                 else if (lang == 1) return "Si è verificato un errore durante il caricamento di un file di impostazioni.";
+            case 19:
+                if (lang == 0) return " spaces";
+                else if (lang == 1) return " spazi";
         }
         String tmp = "none";
         return tmp;

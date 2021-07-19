@@ -13,8 +13,9 @@ public class MText extends JFrame {
     static String prepath;
     static JFrame frame = new JFrame("MText");
     static int lang;
-    static String lineWrap;
+    static boolean lineWrap;
     static int tabSize;
+    static final Image logo = Toolkit.getDefaultToolkit().getImage("/usr/share/icons/mtext.png");  
     static LanguageManager lm = new LanguageManager();
     static TabSizeManager tm = new TabSizeManager();
     static WrapLineSetting ws = new WrapLineSetting();
@@ -26,24 +27,22 @@ public class MText extends JFrame {
         frame.setSize(800, 600);
 
         final String system = System.getProperty("os.name");
-        try {
-            if (system.compareTo("Linux") == 0 && args[0].equals("dev") == false)  {
+        if (system.equals("Linux")) {
+                if (args.length > 0) {
+                    if (args[0].equals("dev")) prepath = ""; 
+                } else prepath = "/etc/mtext/"; 
+                
                 slash = "/";
-                prepath = "/etc/mtext/";
-            }
-            else if (system.equals("Linux") && args[0].equals("dev")) {
-                slash = "/";
-                prepath = "";
-            }
-            else if (system.contains("Windows")) {
-                slash = "\\";
-                prepath = "";
-            }
-        } catch (ArrayIndexOutOfBoundsException ex) {};
+        } else if (system.contains("Windows")) {
+            slash = "\\";
+            prepath = "";
+        }
+
         loadLanguage();
         loadTabs();
         loadWrap();
         
+  
         tabs[0] = new TextFilePanel(null, "none", tabSize);
 
         frame.setTitle("MText - " + lm.getTranslatedString(1, lang));
@@ -97,13 +96,14 @@ public class MText extends JFrame {
         
         frame.setJMenuBar(menubar);
         frame.setSize(800, 600);
+        frame.setIconImage(logo);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new CustomWindowListener());
         frame.getContentPane().add(tPane);
         frame.getContentPane().add(sb, BorderLayout.SOUTH);
         frame.setVisible(true);
     }   
-    static void loadLanguage() {
+    public static void loadLanguage() {
         try {
             File file = new File(prepath + "conf" + slash + "language.txt");
             Scanner scanner = new Scanner(file);
@@ -120,8 +120,7 @@ public class MText extends JFrame {
                 lm.actionPerformed(null);
                 loadLanguage();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
             lm.actionPerformed(null);
@@ -129,7 +128,7 @@ public class MText extends JFrame {
         }
         sb.setSbLanguage(lang);
     }
-    static void loadWrap() {
+    public static void loadWrap() {
         try {
             File file = new File(prepath + "conf" + slash + "wraplines.txt");
             Scanner scanner = new Scanner(file);
@@ -140,7 +139,7 @@ public class MText extends JFrame {
             }
             l = scanner.nextLine();
             if (l.equals("Yes")) {
-                lineWrap = new String("Yes");
+                lineWrap = true;
                 for(TextFilePanel tp : tabs) {
                     try {
                         tp.getTextArea().setLineWrap(true);
@@ -148,9 +147,8 @@ public class MText extends JFrame {
                         return;
                     }
                 }
-            }
-            else if (l.equals("No")) {
-                lineWrap = new String("No");
+            } else if (l.equals("No")) {
+                lineWrap = false;
                 for(TextFilePanel tp : tabs) {
                     try {
                         tp.getTextArea().setLineWrap(false);
@@ -158,21 +156,19 @@ public class MText extends JFrame {
                         return;
                     }
                 }
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
                 ws.actionPerformed(null);
                 loadWrap();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
             ws.actionPerformed(null);
             loadWrap();
         }
     }
-    static void loadTabs() {
+    public static void loadTabs() {
         try {
             File file = new File(prepath + "conf" + slash + "tabsize.txt");
             Scanner scanner = new Scanner(file);
@@ -192,8 +188,7 @@ public class MText extends JFrame {
                         return;
                     }
                 }
-            }
-            else if (l.equals("4 spaces")) {
+            } else if (l.equals("4 spaces")) {
                 tabSize = 4;
                 sb.setSbTabSize(tabSize);
                 for(TextFilePanel tp : tabs) {
@@ -214,20 +209,16 @@ public class MText extends JFrame {
                         return;
                     }
                 }
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
                 tm.actionPerformed(null);
                 loadTabs();
             }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, lm.getTranslatedString(18, lang));
             tm.actionPerformed(null);
             loadTabs();
         }
-
     }    
 }
 
