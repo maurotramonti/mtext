@@ -35,12 +35,12 @@ class LanguageManager extends MText implements ActionListener {
         switch(value) {
             case 0:
                 if (lang == 0) {
-                    String[] tmp = {"Close", "New", "Open", "Save", "Save as...", "Exit", "Language", "About", "Tab size", "Automatic newline"};
+                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About", "Tab size", "Automatic newline"};
                     return tmp;
                 }
 
                 else if (lang == 1) {
-                    String[] tmp = {"Chiudi", "Nuovo", "Apri", "Salva", "Salva con nome...", "Esci", "Lingua", "Info", "Larghezza tabulazione", "A capo automatico"};
+                    String[] tmp = {"Chiudi", "Nuovo", "Apri", "Apri cartella", "Salva", "Salva con nome...", "Esci", "Lingua", "Info", "Larghezza tabulazione", "A capo automatico"};
                     return tmp;
                 }
             case 1:
@@ -62,7 +62,7 @@ class LanguageManager extends MText implements ActionListener {
         String[] tmp = {"none", "none"};
         return tmp;
     }
-    public String getTranslatedString(int value, int lang) {
+    public static String getTranslatedString(int value, int lang) {
         switch(value) {
             case 0:
                 if (lang == 0) return "Preferences";
@@ -125,6 +125,12 @@ class LanguageManager extends MText implements ActionListener {
             case 19:
                 if (lang == 0) return " spaces";
                 else if (lang == 1) return " spazi";
+            case 20:
+                if (lang == 0) return "Explore files: ";
+                else if (lang == 1) return "Esplora file: ";
+            case 21:
+                if (lang == 0) return "Close";
+                else if (lang == 1) return "Chiudi";
         }
         String tmp = "none";
         return tmp;

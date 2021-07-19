@@ -51,6 +51,18 @@ class MIListener extends MText implements ActionListener {
                 readAndInsert(path);                
             }
         }
+        else if (e.getActionCommand().equals("Open folder")) {
+            JFileChooser fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fc.setAcceptAllFileFilterUsed(false);
+            int r = fc.showOpenDialog(frame);
+            if (r == JFileChooser.APPROVE_OPTION) {
+                String currentDir = new String(fc.getSelectedFile().getAbsolutePath());
+                sib.openDir(currentDir);
+                frame.getContentPane().add(sib, BorderLayout.WEST);
+                frame.setVisible(true);
+            }
+        }
         else if (e.getActionCommand().equals("Save")) {            
                 if (tabs[tPane.getSelectedIndex()].getFilePath().compareTo("none") != 0) {
                     saveFile(tabs[tPane.getSelectedIndex()].getFilePath());
@@ -76,26 +88,30 @@ class MIListener extends MText implements ActionListener {
             }
         }
         else if (e.getActionCommand().equals("Exit")) {
-            System.exit(0);
+            CustomWindowListener cwl = new CustomWindowListener();
+            cwl.windowClosing(null);
         }
     }  
     public void readAndInsert(String path) {
         String contents = new String();
-        try {
-            File file = new File(path);
-            Scanner scanner = new Scanner(file);
-            while(scanner.hasNextLine()) {
-                contents = contents + scanner.nextLine() + '\n';
+        if (lastFileOpened.equals(path) == false) {
+            try {
+                File file = new File(path);
+                Scanner scanner = new Scanner(file);
+                while(scanner.hasNextLine()) {
+                    contents = contents + scanner.nextLine() + '\n';
+                }
+                tabs[tPane.getSelectedIndex() + 1] = new TextFilePanel(contents, path, tabSize);
+                tPane.addTab(path, null, tabs[tPane.getSelectedIndex() + 1], null);
+                tPane.setSelectedIndex(tPane.getSelectedIndex() + 1);  
+                tabs[tPane.getSelectedIndex()].setModified(false);
+                scanner.close();
+                frame.setTitle("MText - " + tabs[tPane.getSelectedIndex()].getFilePath());
+                lastFileOpened = new String(path);
             }
-            tabs[tPane.getSelectedIndex() + 1] = new TextFilePanel(contents, path, tabSize);
-            tPane.addTab(path, null, tabs[tPane.getSelectedIndex() + 1], null);
-            tPane.setSelectedIndex(tPane.getSelectedIndex() + 1);  
-            tabs[tPane.getSelectedIndex()].setModified(false);
-            scanner.close();
-            frame.setTitle("MText - " + tabs[tPane.getSelectedIndex()].getFilePath());
-        }
-        catch(IOException ex) {
-            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(12, lang));
+            catch(IOException ex) {
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(12, lang));
+            }
         }                  
     }
     public void saveFile(String path) {

@@ -8,14 +8,14 @@ import javax.swing.filechooser.*;
 import java.io.*;
 import java.util.Scanner;
 
-public class MText extends JFrame {    
-    static String slash;
-    static String prepath;
-    static JFrame frame = new JFrame("MText");
-    static int lang;
+public class MText extends JFrame {   
+    static JFrame frame = new JFrame("MText"); 
+    static String slash, prepath, lastFileOpened;
+    static int lang, tabSize;
     static boolean lineWrap;
-    static int tabSize;
+    static boolean aDirectoryOpened = false;
     static final Image logo = Toolkit.getDefaultToolkit().getImage("/usr/share/icons/mtext.png");  
+    static SideBar sib;
     static LanguageManager lm = new LanguageManager();
     static TabSizeManager tm = new TabSizeManager();
     static WrapLineSetting ws = new WrapLineSetting();
@@ -42,6 +42,8 @@ public class MText extends JFrame {
         loadTabs();
         loadWrap();
         
+        sib = new SideBar(frame, lang);
+        lastFileOpened = "";
   
         tabs[0] = new TextFilePanel(null, "none", tabSize);
 
@@ -49,8 +51,8 @@ public class MText extends JFrame {
         
         String[] menuitem_lbls = lm.getTranslatedStrings(0, lang);
         String[] menuitem_acts = lm.getTranslatedStrings(0, 0);
-        JMenuItem[] menuitems = new JMenuItem[10];
-        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
+        JMenuItem[] menuitems = new JMenuItem[11];
+        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
         JMenuBar menubar = new JMenuBar();
         JMenu file = new JMenu("File");
         JMenu edit = new JMenu(lm.getTranslatedString(0, lang));
@@ -58,41 +60,39 @@ public class MText extends JFrame {
         tPane.addTab(lm.getTranslatedString(1, lang), null, tabs[0], null);
         tPane.addChangeListener(new TabChangedListener());
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             menuitems[i] = new JMenuItem(menuitem_lbls[i]);
             file.add(menuitems[i]);
-            if (i == 4 || i == 0) file.addSeparator();
+            if (i == 5 || i == 0) file.addSeparator();
             menuitems[i].setActionCommand(menuitem_acts[i]);
             menuitems[i].addActionListener(new MIListener());
-            if (i == 4) continue;
+            if (i == 5) continue;
             menuitems[i].setAccelerator(accelerators[i]);
         } 
-
-        
-        menuitems[6] = new JMenuItem(menuitem_lbls[6]);
-        edit.add(menuitems[6]);
-        menuitems[6].setAccelerator(accelerators[6]);
-        menuitems[6].addActionListener(new LanguageManager());
         
         menuitems[7] = new JMenuItem(menuitem_lbls[7]);
-        menuitems[7].setActionCommand(menuitem_acts[7]);
-        menuitems[7].addActionListener(new MIListener());
-
+        edit.add(menuitems[7]);
+        menuitems[7].setAccelerator(accelerators[7]);
+        menuitems[7].addActionListener(new LanguageManager());
+        
         menuitems[8] = new JMenuItem(menuitem_lbls[8]);
-        edit.add(menuitems[8]);
-        menuitems[8].setAccelerator(accelerators[7]);
-        menuitems[8].addActionListener(new TabSizeManager());
+        menuitems[8].setActionCommand(menuitem_acts[8]);
+        menuitems[8].addActionListener(new MIListener());
 
         menuitems[9] = new JMenuItem(menuitem_lbls[9]);
         edit.add(menuitems[9]);
-        menuitems[9].addActionListener(new WrapLineSetting());        
+        menuitems[9].setAccelerator(accelerators[8]);
+        menuitems[9].addActionListener(new TabSizeManager());
 
-        about.add(menuitems[7]);
+        menuitems[10] = new JMenuItem(menuitem_lbls[10]);
+        edit.add(menuitems[10]);
+        menuitems[10].addActionListener(new WrapLineSetting());        
+
+        about.add(menuitems[8]);
 
         menubar.add(file);
         menubar.add(edit);
         menubar.add(about);
-
         
         frame.setJMenuBar(menubar);
         frame.setSize(800, 600);
