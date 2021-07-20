@@ -22,6 +22,7 @@ public class MText extends JFrame {
     static JTabbedPane tPane = new JTabbedPane();
     static TextFilePanel[] tabs = new TextFilePanel[64];
     static StatusBar sb = new StatusBar(frame);
+    static JMenu recentFiles = new JMenu(lm.getTranslatedString(22, lang));
     MText() {}    
     public static void main(String args[]) {
         frame.setSize(800, 600);
@@ -57,19 +58,28 @@ public class MText extends JFrame {
         JMenu file = new JMenu("File");
         JMenu edit = new JMenu(lm.getTranslatedString(0, lang));
         JMenu about = new JMenu(lm.getTranslatedString(5, lang));
+
         tPane.addTab(lm.getTranslatedString(1, lang), null, tabs[0], null);
         tPane.addChangeListener(new TabChangedListener());
 
         for (int i = 0; i < 7; i++) {
             menuitems[i] = new JMenuItem(menuitem_lbls[i]);
             file.add(menuitems[i]);
-            if (i == 5 || i == 0) file.addSeparator();
+            if (i == 0) {
+                file.addSeparator();
+                file.add(recentFiles);
+            }
             menuitems[i].setActionCommand(menuitem_acts[i]);
             menuitems[i].addActionListener(new MIListener());
-            if (i == 5) continue;
+            if (i == 5) {
+                file.addSeparator();
+                continue;
+            }
             menuitems[i].setAccelerator(accelerators[i]);
         } 
         
+        loadRecentFiles();
+
         menuitems[7] = new JMenuItem(menuitem_lbls[7]);
         edit.add(menuitems[7]);
         menuitems[7].setAccelerator(accelerators[7]);
@@ -220,5 +230,26 @@ public class MText extends JFrame {
             loadTabs();
         }
     }    
+    static void loadRecentFiles() {
+        String s = new String();
+        try {
+            File file = new File(prepath + "conf" + slash + "recentfiles.txt");
+            Scanner scanner = new Scanner(file);
+            JMenuItem mi;
+            if (scanner.hasNextLine() == false) {
+                recentFiles.add(new JMenuItem(lm.getTranslatedString(23, lang)));
+                return;
+            } else {
+                do {
+                    mi = new JMenuItem(scanner.nextLine());
+                    mi.setActionCommand("Recent file");
+                    mi.addActionListener(new MIListener());
+                    recentFiles.add(mi);
+
+                } while (scanner.hasNextLine());
+                
+            }
+        } catch (IOException ex) {};
+    }
 }
 

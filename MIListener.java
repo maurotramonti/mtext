@@ -9,7 +9,8 @@ import java.io.*;
 import java.util.Scanner;
 
 class MIListener extends MText implements ActionListener {
-    public void actionPerformed(ActionEvent e) {       
+    public void actionPerformed(ActionEvent e) {      
+        JMenuItem mi = (JMenuItem)e.getSource(); 
         if (e.getActionCommand().equals("About")) {
             JOptionPane.showMessageDialog(frame, lm.getTranslatedString(3, lang));
         }     
@@ -28,6 +29,13 @@ class MIListener extends MText implements ActionListener {
                 }
             }
             tPane.remove(tPane.getSelectedIndex());
+        }
+        else if (e.getActionCommand().equals("Recent file")) {
+            if (tPane.getSelectedIndex() == 63) {
+                JOptionPane.showMessageDialog(frame, lm.getTranslatedString(11, lang));
+                return;
+            }
+            readAndInsert(mi.getLabel());
         }
         else if (e.getActionCommand().equals("New")) {
             if (tPane.getSelectedIndex() == 63) {
@@ -108,6 +116,9 @@ class MIListener extends MText implements ActionListener {
                 scanner.close();
                 frame.setTitle("MText - " + tabs[tPane.getSelectedIndex()].getFilePath());
                 lastFileOpened = new String(path);
+                BufferedWriter bw = new BufferedWriter(new FileWriter(prepath + "conf" + slash + "recentfiles.txt", true));
+                bw.write(path + "\n");
+                bw.close();
             }
             catch(IOException ex) {
                 JOptionPane.showMessageDialog(frame, lm.getTranslatedString(12, lang));

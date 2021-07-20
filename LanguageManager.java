@@ -75,8 +75,8 @@ class LanguageManager extends MText implements ActionListener {
                 if (lang == 0) return "Would you save the file?";
                 else if (lang == 1) return "Salvare le modifiche al file?";
             case 3:
-                if (lang == 0) return "MText, build 190721\nAuthor: Mauro Tramonti";
-                else if (lang == 1) return "MText, build 190721\nAutore: Mauro Tramonti";
+                if (lang == 0) return "MText, build 200721\nAuthor: Mauro Tramonti";
+                else if (lang == 1) return "MText, build 200721\nAutore: Mauro Tramonti";
             case 4:
                 if (lang == 0) return "Edit";
                 else if (lang == 1) return "Modifica";
@@ -131,6 +131,12 @@ class LanguageManager extends MText implements ActionListener {
             case 21:
                 if (lang == 0) return "Close";
                 else if (lang == 1) return "Chiudi";
+            case 22:
+                if (lang == 0) return "Recent files";
+                else if (lang == 1) return "File recenti";
+            case 23:
+                if (lang == 0) return "No recent files";
+                else if (lang == 1) return "Nessun file recente";
         }
         String tmp = "none";
         return tmp;
