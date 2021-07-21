@@ -8,15 +8,19 @@ import java.io.*;
 import java.util.Scanner;
 
 class SysConst {
-    public static String getSlash() {
-        final String system = System.getProperty("os.name");
+    static final String system = System.getProperty("os.name");
+    public static String getSlash() {        
         if (system.contains("Windows")) return "\\";
         else return "/";
     }
     public static String getPrePath() {
         final String system = System.getProperty("os.name");
-        if (system.contains("Windows")) return "";
+        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") + "\\mtext\\";
         else return "/etc/mtext/";
+    }
+    public static String getLogoPath() {
+        if (system.contains("Windows")) return "mtext.png";
+        else return "/usr/share/icons/mtext.png";
     }
 }
 
@@ -37,7 +41,7 @@ class MTextFrame extends JFrame {
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new CustomWindowListener());
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("/usr/share/icons/mtext.png"));
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage(SysConst.getLogoPath()));
 
         sb = new StatusBar(frame);
 
