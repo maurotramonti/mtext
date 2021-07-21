@@ -4,31 +4,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
-import javax.swing.filechooser.*;
-import java.io.*;
-import java.util.Scanner;
 
 class TAListener extends MText implements DocumentListener {
     public void changedUpdate(DocumentEvent de) {
-        TextFilePanel current = tabs[tPane.getSelectedIndex()];
-        if (current.getIfIsModified() == false) {
-            current.setModified(true);
-            frame.setTitle(frame.getTitle() + "*");
-        }
-    }
-    
+        act();
+    }    
     public void removeUpdate(DocumentEvent de) {
-        TextFilePanel current = tabs[tPane.getSelectedIndex()];
-        if (current.getIfIsModified() == false) {
-            current.setModified(true);
-            frame.setTitle(frame.getTitle() + "*");
-        }
+        act();
     } 
     public void insertUpdate(DocumentEvent de) {
-        TextFilePanel current = tabs[tPane.getSelectedIndex()];
+        act();
+    }
+    
+    private void act() {
+        TextFilePanel current = frame.getFileTabs()[frame.getTabPane().getSelectedIndex()];
         if (current.getIfIsModified() == false) {
             current.setModified(true);
-            frame.setTitle(frame.getTitle() + "*");
+            frame.getFrame().setTitle(frame.getFrame().getTitle() + "*");
         }
     }
 }

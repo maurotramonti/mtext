@@ -68,7 +68,7 @@ class SideBarListener extends MIListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
         if (active) {
             JComboBox box = (JComboBox)e.getSource();
-            readAndInsert(sib.getCurrentDir() + slash + box.getSelectedItem());
+            readAndInsert(frame.getSideBar().getCurrentDir() + SysConst.getSlash() + box.getSelectedItem());
         }
     }
 
@@ -79,14 +79,14 @@ class SideBarListener extends MIListener implements ItemListener {
 
 class CloseSidebarListener extends MText implements ActionListener {
     public void actionPerformed(ActionEvent e) {
-        sib.closeDir();
-        frame.getContentPane().remove(sib);
+        frame.getSideBar().closeDir();
+        frame.getFrame().getContentPane().remove(frame.getSideBar());
     }
 }
 
-class FNFilter extends MText implements FilenameFilter {
+class FNFilter implements FilenameFilter {
     public boolean accept(File dir, String fileName) {
-        File file = new File(dir.getPath() + slash + fileName);
+        File file = new File(dir.getPath() + SysConst.getSlash() + fileName);
         if (file.isFile()) {
             return fileName.endsWith(".txt") || fileName.endsWith(".sh") || fileName.endsWith(".java") || (!fileName.contains(".") && fileName.endsWith(""));
         } else return false;

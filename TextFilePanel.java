@@ -39,3 +39,4 @@ class TextFilePanel extends JScrollPane {
         isModified = b;
     }
 }
+

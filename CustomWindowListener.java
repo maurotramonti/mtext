@@ -7,8 +7,9 @@ import java.awt.event.*;
 
 class CustomWindowListener extends MText implements WindowListener {
     public void windowClosing(WindowEvent e) {
+        JFrame jframe = frame.getFrame();
         boolean aFileModified = false;
-        for (TextFilePanel tp : tabs) {
+        for (TextFilePanel tp : frame.getFileTabs()) {
             try {
                 if (tp.getIfIsModified()) {
                     aFileModified = true;
@@ -19,7 +20,7 @@ class CustomWindowListener extends MText implements WindowListener {
             }
         }
         if (aFileModified) {
-            int r = JOptionPane.showConfirmDialog(frame, lm.getTranslatedString(6, lang), lm.getTranslatedString(10, lang), JOptionPane.YES_NO_OPTION);
+            int r = JOptionPane.showConfirmDialog(jframe, LanguageManager.getTranslatedString(6, frame.getLang()), LanguageManager.getTranslatedString(10, frame.getLang()), JOptionPane.YES_NO_OPTION);
             if (r == JOptionPane.YES_OPTION) return;
             else if (r == JOptionPane.NO_OPTION) System.exit(0);
         }

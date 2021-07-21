@@ -16,7 +16,7 @@ class CustomCaretListener extends MText implements CaretListener {
             int caretpos = txt.getCaretPosition();
             linenum = txt.getLineOfOffset(caretpos);
             columnnum = caretpos - txt.getLineStartOffset(linenum);
-            sb.setLC(++linenum, ++columnnum);
+            frame.getStatusBar().setLC(++linenum, ++columnnum);
         }
         catch(BadLocationException ex) {}
 
@@ -47,14 +47,13 @@ class StatusBar extends JLabel {
         setStatusMessage();
     }
 
-    public void setStatusMessage() {
-        LanguageManager lm = new LanguageManager();
+    private void setStatusMessage() {
         String msg = new String("");
         if (lang == 0) msg = new String("Language: English");
         else if (lang == 1) msg = new String("Lingua: Italiano");
 
-        msg = new String(msg + "      " + lm.getTranslatedString(7, lang) + tabsize + lm.getTranslatedString(19, lang));
-        msg = new String(msg + "        " + lm.getTranslatedString(8, lang) + row + " " + lm.getTranslatedString(9, lang) + col);
+        msg = new String(msg + "      " + LanguageManager.getTranslatedString(7, lang) + tabsize + LanguageManager.getTranslatedString(19, lang));
+        msg = new String(msg + "        " + LanguageManager.getTranslatedString(8, lang) + row + " " + LanguageManager.getTranslatedString(9, lang) + col);
 
         setText(" " + msg);
     }

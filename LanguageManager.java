@@ -9,16 +9,18 @@ import java.io.*;
 import java.util.Scanner;
 
 class LanguageManager extends MText implements ActionListener {
+    int lang;
     String[] langs = {"Italiano", "English"};
     public void actionPerformed(ActionEvent e) { 
+        lang = frame.getLang();
         String clg;
-        if(lang == 0)  clg = new String("English");
+        if(lang == 0) clg = new String("English");
         else if(lang == 1) clg = new String("Italiano");
         else clg = new String("none");
         try {
-            String s = (String) JOptionPane.showInputDialog(frame, lm.getTranslatedString(16, lang), lm.getTranslatedString(10, lang), JOptionPane.PLAIN_MESSAGE, null, langs, clg);
+            String s = (String) JOptionPane.showInputDialog(frame.getFrame(), getTranslatedString(16, lang), getTranslatedString(10, lang), JOptionPane.PLAIN_MESSAGE, null, langs, clg);
             if (s != null) {
-                File file = new File(prepath + "conf" + slash + "language.txt");
+                File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "language.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 br.write(s);
@@ -26,12 +28,12 @@ class LanguageManager extends MText implements ActionListener {
             }
         }
         catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame, lm.getTranslatedString(15, lang));
+            JOptionPane.showMessageDialog(frame.getFrame(), getTranslatedString(15, lang));
             return;
         }
     }
 
-    public String[] getTranslatedStrings(int value, int lang) {
+    public static String[] getTranslatedStrings(int value, int lang) {
         switch(value) {
             case 0:
                 if (lang == 0) {
@@ -75,8 +77,8 @@ class LanguageManager extends MText implements ActionListener {
                 if (lang == 0) return "Would you save the file?";
                 else if (lang == 1) return "Salvare le modifiche al file?";
             case 3:
-                if (lang == 0) return "MText, build 200721\nAuthor: Mauro Tramonti";
-                else if (lang == 1) return "MText, build 200721\nAutore: Mauro Tramonti";
+                if (lang == 0) return "MText, build 210721\nAuthor: Mauro Tramonti";
+                else if (lang == 1) return "MText, build 210721\nAutore: Mauro Tramonti";
             case 4:
                 if (lang == 0) return "Edit";
                 else if (lang == 1) return "Modifica";
