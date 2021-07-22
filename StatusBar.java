@@ -27,7 +27,7 @@ class StatusBar extends JLabel {
     static int lang, tabsize, col, row;
     public StatusBar(JFrame master) {
         super("Loading...", SwingConstants.RIGHT);
-        super.setPreferredSize(new Dimension(master.getWidth(), 16));
+        super.setPreferredSize(new Dimension(master.getWidth(), 23));
         col = 1;
         row = 1;
     }

@@ -60,7 +60,7 @@ class MTextFrame extends JFrame {
 
         String[] menuItemLbls = LanguageManager.getTranslatedStrings(0, lang);
         String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
-        JMenuItem[] menuItems = new JMenuItem[11];
+        JMenuItem[] menuItems = new JMenuItem[12];
         KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
 
         JMenuBar menuBar = new JMenuBar();
@@ -100,7 +100,11 @@ class MTextFrame extends JFrame {
 
         menuItems[10] = new JMenuItem(menuItemLbls[10]);
         edit.add(menuItems[10]);
-        menuItems[10].addActionListener(new WrapLineSetting());        
+        menuItems[10].addActionListener(new WrapLineSetting());    
+
+        menuItems[11] = new JMenuItem(menuItemLbls[11]);
+        edit.add(menuItems[11]);
+        menuItems[11].addActionListener(new ThemeManager());    
 
         about.add(menuItems[8]);
 
@@ -305,7 +309,39 @@ class MTextFrame extends JFrame {
 
 public class MText {
     static MTextFrame frame;
+    static int theme = 0;
     public static void main(String[] args) {
+        try {
+            File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "theme.txt");
+            Scanner scanner = new Scanner(file);
+            if (scanner.hasNextLine() == false) {
+                scanner.close();
+                ThemeManager tm = new ThemeManager();
+                tm.actionPerformed(null);
+                
+            } else {
+                String s = scanner.nextLine();
+                if (s.equals("0")) theme = 0;
+                else if (s.equals("1")) theme = 1;
+                scanner.close();
+            }
+        } catch (IOException ex) {}
+        try {
+            if (theme == 0) UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            else if (theme == 1) UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (UnsupportedLookAndFeelException e) {
+       // handle exception
+        }
+        catch (ClassNotFoundException e) {
+       // handle exception
+        }
+        catch (InstantiationException e) {
+       // handle exception
+        }
+        catch (IllegalAccessException e) {
+       // handle exception
+        }
         frame = new MTextFrame();
     }
 }

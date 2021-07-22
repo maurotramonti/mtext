@@ -37,12 +37,12 @@ class LanguageManager extends MText implements ActionListener {
         switch(value) {
             case 0:
                 if (lang == 0) {
-                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About", "Tab size", "Automatic newline"};
+                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About", "Tab size", "Automatic newline", "App theme"};
                     return tmp;
                 }
 
                 else if (lang == 1) {
-                    String[] tmp = {"Chiudi", "Nuovo", "Apri", "Apri cartella", "Salva", "Salva con nome...", "Esci", "Lingua", "Info", "Larghezza tabulazione", "A capo automatico"};
+                    String[] tmp = {"Chiudi", "Nuovo", "Apri", "Apri cartella", "Salva", "Salva con nome...", "Esci", "Lingua", "Info", "Larghezza tabulazione", "A capo automatico", "Tema applicazione"};
                     return tmp;
                 }
             case 1:
@@ -77,8 +77,8 @@ class LanguageManager extends MText implements ActionListener {
                 if (lang == 0) return "Would you save the file?";
                 else if (lang == 1) return "Salvare le modifiche al file?";
             case 3:
-                if (lang == 0) return "MText, build 210721\nAuthor: Mauro Tramonti";
-                else if (lang == 1) return "MText, build 210721\nAutore: Mauro Tramonti";
+                if (lang == 0) return "MText 1.7 (build 220721)\nAuthor: Mauro Tramonti";
+                else if (lang == 1) return "MText 1.7 (build 220721)\nAutore: Mauro Tramonti";
             case 4:
                 if (lang == 0) return "Edit";
                 else if (lang == 1) return "Modifica";
@@ -139,6 +139,9 @@ class LanguageManager extends MText implements ActionListener {
             case 23:
                 if (lang == 0) return "No recent files";
                 else if (lang == 1) return "Nessun file recente";
+            case 24:
+                if (lang == 0) return "Restart is needed to apply the setting.";
+                else if (lang == 1) return "Riavvio richiesto per applicare le modifiche.";
         }
         String tmp = "none";
         return tmp;

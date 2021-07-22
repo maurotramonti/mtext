@@ -1,5 +1,6 @@
 package mtext;
 
+import javax.swing.ImageIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,12 +9,13 @@ import java.util.Scanner;
 import javax.swing.filechooser.*;
 import java.io.*;
 
+
 class MIListener extends MText implements ActionListener {
     int lang;
     public void actionPerformed(ActionEvent e) {   
         lang = frame.getLang();
         if (e.getActionCommand().equals("About")) {
-            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(3, lang));
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(3, lang), "Version info", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getLogoPath()));
         }     
         else if (e.getActionCommand().equals("Recent file")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
