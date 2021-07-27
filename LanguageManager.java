@@ -9,8 +9,8 @@ import java.io.*;
 import java.util.Scanner;
 
 class LanguageManager extends MText implements ActionListener {
-    int lang;
-    String[] langs = {"Italiano", "English"};
+    private int lang;
+    private String[] langs = {"Italiano", "English"};
     public void actionPerformed(ActionEvent e) { 
         lang = frame.getLang();
         String clg;
@@ -37,12 +37,12 @@ class LanguageManager extends MText implements ActionListener {
         switch(value) {
             case 0:
                 if (lang == 0) {
-                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About", "Tab size", "Automatic newline", "App theme"};
+                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About MText", "Tab size", "Automatic newline", "App theme", "About Java"};
                     return tmp;
                 }
 
                 else if (lang == 1) {
-                    String[] tmp = {"Chiudi", "Nuovo", "Apri", "Apri cartella", "Salva", "Salva con nome...", "Esci", "Lingua", "Info", "Larghezza tabulazione", "A capo automatico", "Tema applicazione"};
+                    String[] tmp = {"Chiudi", "Nuovo", "Apri", "Apri cartella", "Salva", "Salva con nome...", "Esci", "Lingua", "Informazioni su MText", "Larghezza tabulazione", "A capo automatico", "Tema applicazione", "Informazioni su Java"};
                     return tmp;
                 }
             case 1:
@@ -68,8 +68,7 @@ class LanguageManager extends MText implements ActionListener {
         switch(value) {
             case 0:
                 if (lang == 0) return "Preferences";
-                else if (lang == 1) return "Preferenze";
-                
+                else if (lang == 1) return "Preferenze";                
             case 1: //untitled - senza titolo
                 if (lang == 0) return "untitled";
                 else if(lang == 1) return "senza titolo";
@@ -77,8 +76,8 @@ class LanguageManager extends MText implements ActionListener {
                 if (lang == 0) return "Would you save the file?";
                 else if (lang == 1) return "Salvare le modifiche al file?";
             case 3:
-                if (lang == 0) return "MText 1.7 (build 220721)\nAuthor: Mauro Tramonti";
-                else if (lang == 1) return "MText 1.7 (build 220721)\nAutore: Mauro Tramonti";
+                if (lang == 0) return "MText 1.7.1 (build 260721)\nAuthor: Mauro Tramonti";
+                else if (lang == 1) return "MText 1.7.1 (build 260721)\nAutore: Mauro Tramonti";
             case 4:
                 if (lang == 0) return "Edit";
                 else if (lang == 1) return "Modifica";
@@ -142,6 +141,9 @@ class LanguageManager extends MText implements ActionListener {
             case 24:
                 if (lang == 0) return "Restart is needed to apply the setting.";
                 else if (lang == 1) return "Riavvio richiesto per applicare le modifiche.";
+            case 25:
+                if (lang == 0) return "Version: " + System.getProperty("java.vm.version") + "\nInstall path:  " + System.getProperty("java.home") + "\nOperating system: " + System.getProperty("os.name");
+                else if (lang == 1) return "Versione: " + System.getProperty("java.vm.version") + "\nPercorso di installazione:  " + System.getProperty("java.home") + "\nSistema operativo: " + System.getProperty("os.name");
         }
         String tmp = "none";
         return tmp;

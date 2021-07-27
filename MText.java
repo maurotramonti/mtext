@@ -22,20 +22,24 @@ class SysConst {
         if (system.contains("Windows")) return "mtext.png";
         else return "/usr/share/icons/mtext.png";
     }
+    public static String getJavaLogoPath() {
+        if (system.contains("Windows")) return "javalogo.png";
+        else return "/usr/share/icons/javalogo.png";
+    }
 }
 
 class MTextFrame extends JFrame {
-    JFrame frame;
-    int lang, tabSize;
-    boolean lineWrap;
-    TextFilePanel[] fileTabs = new TextFilePanel[64];
-    JTabbedPane tPane = new JTabbedPane();
-    String lastFileOpened = new String("");
-    StatusBar sb;
-    SideBar sib;
-    JMenu recentFiles;
+    private JFrame frame;
+    private int lang, tabSize;
+    private boolean lineWrap;
+    private TextFilePanel[] fileTabs = new TextFilePanel[64];
+    private JTabbedPane tPane = new JTabbedPane();
+    private String lastFileOpened = new String("");
+    private StatusBar sb;
+    private SideBar sib;
+    private JMenu recentFiles;
     
-    public MTextFrame() {
+    MTextFrame() {
         super("MText");
         frame = this;
         frame.setSize(800, 600);
@@ -60,7 +64,7 @@ class MTextFrame extends JFrame {
 
         String[] menuItemLbls = LanguageManager.getTranslatedStrings(0, lang);
         String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
-        JMenuItem[] menuItems = new JMenuItem[12];
+        JMenuItem[] menuItems = new JMenuItem[13];
         KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
 
         JMenuBar menuBar = new JMenuBar();
@@ -104,9 +108,14 @@ class MTextFrame extends JFrame {
 
         menuItems[11] = new JMenuItem(menuItemLbls[11]);
         edit.add(menuItems[11]);
-        menuItems[11].addActionListener(new ThemeManager());    
+        menuItems[11].addActionListener(new ThemeManager());   
+
+        menuItems[12] = new JMenuItem(menuItemLbls[12]);
+        menuItems[12].setActionCommand("Java info");
+        menuItems[12].addActionListener(new MIListener()); 
 
         about.add(menuItems[8]);
+        about.add(menuItems[12]);
 
         menuBar.add(file);
         menuBar.add(edit);

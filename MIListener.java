@@ -14,7 +14,7 @@ class MIListener extends MText implements ActionListener {
     int lang;
     public void actionPerformed(ActionEvent e) {   
         lang = frame.getLang();
-        if (e.getActionCommand().equals("About")) {
+        if (e.getActionCommand().equals("About MText")) {
             JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(3, lang), "Version info", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getLogoPath()));
         }     
         else if (e.getActionCommand().equals("Recent file")) {
@@ -104,11 +104,14 @@ class MIListener extends MText implements ActionListener {
             CustomWindowListener cwl = new CustomWindowListener();
             cwl.windowClosing(null);
         }
+        else if (e.getActionCommand().equals("Java info")) {
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(25, lang), "About Java", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getJavaLogoPath()));
+        }
     }  
     public void readAndInsert(String path) {
         String contents = new String();
-        int lang = frame.getLang();
         if (frame.getLFO().equals(path) == false) {
+            int lang = frame.getLang();
             try {
                 File file = new File(path);
                 Scanner scanner = new Scanner(file);
