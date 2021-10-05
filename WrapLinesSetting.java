@@ -17,9 +17,9 @@ class WrapLineSetting extends MText implements ActionListener {
         else cln = opt[1];
 
         try {
-            String s = (String) JOptionPane.showInputDialog(frame.getFrame(), LanguageManager.getTranslatedString(14, lang), LanguageManager.getTranslatedString(10, lang), JOptionPane.PLAIN_MESSAGE, null, opt, cln);
+            String s = (String) JOptionPane.showInputDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("AutomaticNewlineSetting", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.PLAIN_MESSAGE, null, opt, cln);
             if (s != null) {
-                File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "wraplines.txt");
+                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "wraplines.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 if (s.equals(opt[0])) br.write("Yes");
@@ -27,7 +27,7 @@ class WrapLineSetting extends MText implements ActionListener {
                 br.close();
             }
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(15, lang)); // only on Windows, because of permissions
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("PermsError", lang)); // only on Windows, because of permissions
             return;
         }
         frame.loadWrap();

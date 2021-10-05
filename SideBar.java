@@ -17,14 +17,14 @@ class SideBar extends JPanel {
         super();
         setPreferredSize(new Dimension(190, 600));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        lbl = new JLabel(LanguageManager.getTranslatedString(20, lang));
+        lbl = new JLabel(LanguageManager.getTranslationsFromFile("ExploreFiles", lang));
         lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         lbl.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         add(lbl);
         filesList.setMaximumSize(new Dimension(183, 22));
         filesList.addItemListener(sbl);
         add(filesList);
-        closeSidebar = new JButton(LanguageManager.getTranslatedString(21, lang));
+        closeSidebar = new JButton(LanguageManager.getTranslationsFromFile("Close", lang));
         closeSidebar.addActionListener(new CloseSidebarListener());
         closeSidebar.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(closeSidebar);
@@ -68,7 +68,7 @@ class SideBarListener extends MIListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
         if (active) {
             JComboBox box = (JComboBox)e.getSource();
-            readAndInsert(frame.getSideBar().getCurrentDir() + SysConst.getSlash() + box.getSelectedItem());
+            readAndInsert(frame.getSideBar().getCurrentDir() + File.separator + box.getSelectedItem());
         }
     }
 
@@ -86,7 +86,7 @@ class CloseSidebarListener extends MText implements ActionListener {
 
 class FNFilter implements FilenameFilter {
     public boolean accept(File dir, String fileName) {
-        File file = new File(dir.getPath() + SysConst.getSlash() + fileName);
+        File file = new File(dir.getPath() + File.separator + fileName);
         if (file.isFile()) {
             return fileName.endsWith(".txt") || fileName.endsWith(".sh") || fileName.endsWith(".java") || (!fileName.contains(".") && fileName.endsWith(""));
         } else return false;

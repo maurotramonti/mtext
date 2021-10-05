@@ -10,7 +10,7 @@ import java.io.*;
 class TabSizeManager extends MText implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         int lang = frame.getLang();
-        String ts = LanguageManager.getTranslatedString(19, lang);
+        String ts = " " + LanguageManager.getTranslationsFromFile("Spaces", lang);
 
         String[] len = {"2" + ts, "4" + ts, "8" + ts};
         String ctb;
@@ -19,9 +19,9 @@ class TabSizeManager extends MText implements ActionListener {
         else if(frame.getTabSize() == 8) ctb = new String (len[2]);
         else ctb = new String("none");
         try {
-            String s = (String) JOptionPane.showInputDialog(frame.getFrame(), LanguageManager.getTranslatedString(17, lang), LanguageManager.getTranslatedString(10, lang), JOptionPane.PLAIN_MESSAGE, null, len, ctb);
+            String s = (String) JOptionPane.showInputDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("TabSizeSetting", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.PLAIN_MESSAGE, null, len, ctb);
             if (s != null) {
-                File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "tabsize.txt");
+                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "tabsize.txt");
                 FileWriter fw = new FileWriter(file);
                 BufferedWriter br = new BufferedWriter(fw);
                 if (s.contains("2")) br.write("2 spaces");
@@ -29,11 +29,7 @@ class TabSizeManager extends MText implements ActionListener {
                 else if (s.contains("8")) br.write("8 spaces");
                 br.close();
             }
-        }
-        catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(15, lang)); // only Windows
-            return;
-        }
+        } catch (IOException ex) {}
         frame.loadTabs();
         return;
         

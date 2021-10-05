@@ -15,7 +15,7 @@ class MIListener extends MText implements ActionListener {
     public void actionPerformed(ActionEvent e) {   
         lang = frame.getLang();
         if (e.getActionCommand().equals("About MText")) {
-            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(3, lang), "Version info", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getLogoPath()));
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("VersionString", lang), "Version info", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getLogoPath()));
         }     
         else if (e.getActionCommand().equals("Recent file")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
@@ -27,7 +27,7 @@ class MIListener extends MText implements ActionListener {
         }
         else if (e.getActionCommand().equals("Close")) {
             if (frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getIfIsModified()) {
-                int n = JOptionPane.showConfirmDialog(frame.getFrame(), LanguageManager.getTranslatedString(2, lang), LanguageManager.getTranslatedString(10, lang), JOptionPane.YES_NO_OPTION);
+                int n = JOptionPane.showConfirmDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("SaveEditsQuestion", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.YES_NO_OPTION);
                 if (n == JOptionPane.YES_OPTION) {
                     if (frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath().equals("none")) {
                         JFileChooser fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -43,7 +43,7 @@ class MIListener extends MText implements ActionListener {
         }
         else if (e.getActionCommand().equals("New")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
-                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(11, lang));
+                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("TooManyTabs", lang));
                 return;
             }
             TextFilePanel[] fileTabs = frame.getFileTabs();
@@ -54,7 +54,7 @@ class MIListener extends MText implements ActionListener {
         }
         else if (e.getActionCommand().equals("Open")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
-                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(11, lang));
+                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("TooManyTabs", lang));
                 return;
             }
             JFileChooser fc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -105,11 +105,12 @@ class MIListener extends MText implements ActionListener {
             cwl.windowClosing(null);
         }
         else if (e.getActionCommand().equals("Java info")) {
-            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(25, lang), "About Java", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getJavaLogoPath()));
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getJavaVersionString(lang), "About Java", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(SysConst.getJavaLogoPath()));
         }
     }  
     public void readAndInsert(String path) {
         String contents = new String();
+
         if (frame.getLFO().equals(path) == false) {
             int lang = frame.getLang();
             try {
@@ -125,12 +126,12 @@ class MIListener extends MText implements ActionListener {
                 scanner.close();
                 frame.getFrame().setTitle("MText - " + frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath());
                 frame.setLFO(path);
-                BufferedWriter bw = new BufferedWriter(new FileWriter(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "recentfiles.txt", true));
+                BufferedWriter bw = new BufferedWriter(new FileWriter(SysConst.getPrePath() + "conf" + File.separator + "recentfiles.txt", true));
                 bw.write(path + "\n");
                 bw.close();
             }
             catch(IOException ex) {
-                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(12, lang));
+                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ReadingError", lang));
             }
         }                  
     }
@@ -148,7 +149,7 @@ class MIListener extends MText implements ActionListener {
             frame.setTitle("MText - " + frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath());
         }
         catch(IOException ex) {
-            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(13, lang));
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("SavingError", lang));
         }                  
     }
 

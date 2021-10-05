@@ -17,7 +17,7 @@ class ThemeManager extends MText implements ActionListener {
         String s = (String) JOptionPane.showInputDialog(fr, null, "Select theme", JOptionPane.PLAIN_MESSAGE, null, opt, opt[0]);
         if (s != null) {
             try {
-                FileWriter fw = new FileWriter(new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "theme.txt"));
+                FileWriter fw = new FileWriter(new File(SysConst.getPrePath() + "conf" + File.separator + "theme.txt"));
                 BufferedWriter br = new BufferedWriter(fw);
                 if (s.equals("Java Cross-Platform")) {                        
                     br.write("0");
@@ -29,7 +29,7 @@ class ThemeManager extends MText implements ActionListener {
                 br.close();
                 try {
                     e.getSource();
-                    JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(24, frame.getLang()));
+                    JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("RebootNeeded", frame.getLang()));
                 } catch (NullPointerException ex) {};
         } catch (IOException ex) {}
             } else theme = 0;

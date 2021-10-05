@@ -20,7 +20,7 @@ class CustomWindowListener extends MText implements WindowListener {
             }
         }
         if (aFileModified) {
-            int r = JOptionPane.showConfirmDialog(jframe, LanguageManager.getTranslatedString(6, frame.getLang()), LanguageManager.getTranslatedString(10, frame.getLang()), JOptionPane.YES_NO_OPTION);
+            int r = JOptionPane.showConfirmDialog(jframe, LanguageManager.getTranslationsFromFile("SomeFilesUnsaved", frame.getLang()), LanguageManager.getTranslationsFromFile("Warning", frame.getLang()), JOptionPane.YES_NO_OPTION);
             if (r == JOptionPane.YES_OPTION) return;
             else if (r == JOptionPane.NO_OPTION) System.exit(0);
         }

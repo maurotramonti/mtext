@@ -52,8 +52,8 @@ class StatusBar extends JLabel {
         if (lang == 0) msg = new String("Language: English");
         else if (lang == 1) msg = new String("Lingua: Italiano");
 
-        msg = new String(msg + "      " + LanguageManager.getTranslatedString(7, lang) + tabsize + LanguageManager.getTranslatedString(19, lang));
-        msg = new String(msg + "        " + LanguageManager.getTranslatedString(8, lang) + row + " " + LanguageManager.getTranslatedString(9, lang) + col);
+        msg = new String(msg + "      " + LanguageManager.getTranslationsFromFile("TabSizeSetting", lang) + tabsize + " " +  LanguageManager.getTranslationsFromFile("Spaces", lang));
+        msg = new String(msg + "        " + LanguageManager.getTranslationsFromFile("Row", lang) + row + " " + LanguageManager.getTranslationsFromFile("Column", lang) + col);
 
         setText(" " + msg);
     }

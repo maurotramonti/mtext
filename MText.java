@@ -9,12 +9,7 @@ import java.util.Scanner;
 
 class SysConst {
     static final String system = System.getProperty("os.name");
-    public static String getSlash() {        
-        if (system.contains("Windows")) return "\\";
-        else return "/";
-    }
     public static String getPrePath() {
-        final String system = System.getProperty("os.name");
         if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") + "\\mtext\\";
         else return "/etc/mtext/";
     }
@@ -38,8 +33,9 @@ class MTextFrame extends JFrame {
     private StatusBar sb;
     private SideBar sib;
     private JMenu recentFiles;
+    static MIListener x = new MIListener();
     
-    MTextFrame() {
+    MTextFrame(String[] args) {
         super("MText");
         frame = this;
         frame.setSize(800, 600);
@@ -53,24 +49,51 @@ class MTextFrame extends JFrame {
         loadTabs();
         loadWrap();
 
-        recentFiles = new JMenu(LanguageManager.getTranslatedString(22, lang));
+        recentFiles = new JMenu(LanguageManager.getTranslationsFromFile("RecentFiles", lang));
         loadRecentFiles();
 
         sib = new SideBar(frame, lang);
+        if (args.length == 0) {
+            fileTabs[0] = new TextFilePanel(null, "none", tabSize);
+            tPane.addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[0], null);
+        } else {
+            for (int i = 0; i < args.length; i++) {
+                String contents = new String();
+                try {
+                    File file = new File(args[i]);
+                    Scanner scanner = new Scanner(file);
+                    while(scanner.hasNextLine()) {
+                        contents = contents + scanner.nextLine() + '\n';
+                    }
+                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, args[i], /*tabSize*/4);
+                    getTabPane().addTab(args[i], null, getFileTabs()[getTabPane().getSelectedIndex() + 1], null);
+                    getTabPane().setSelectedIndex(getTabPane().getSelectedIndex());  
+                    getFileTabs()[getTabPane().getSelectedIndex()].setModified(false);
+                    scanner.close();
+                    setTitle("MText - " + getFileTabs()[getTabPane().getSelectedIndex()].getFilePath());
+                    setLFO(args[i]);
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(SysConst.getPrePath() + "conf" + File.separator + "recentfiles.txt", true));
+                    bw.write(args[i] + "\n");
+                    bw.close();
+                }
+                catch(IOException ex) {
+                    JOptionPane.showMessageDialog(this, LanguageManager.getTranslationsFromFile("ReadingError", lang));
+                }
+            }                                 
+                }
 
-        fileTabs[0] = new TextFilePanel(null, "none", tabSize);
-        tPane.addTab(LanguageManager.getTranslatedString(1, lang), null, fileTabs[0], null);
         tPane.addChangeListener(new TabChangedListener());
+        
 
-        String[] menuItemLbls = LanguageManager.getTranslatedStrings(0, lang);
+        String[] menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
         String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
         JMenuItem[] menuItems = new JMenuItem[13];
         KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
 
         JMenuBar menuBar = new JMenuBar();
         JMenu file = new JMenu("File");
-        JMenu edit = new JMenu(LanguageManager.getTranslatedString(0, lang));
-        JMenu about = new JMenu(LanguageManager.getTranslatedString(5, lang));
+        JMenu edit = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang));
+        JMenu about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
 
         for (int i = 0; i < 7; i++) {
             menuItems[i] = new JMenuItem(menuItemLbls[i]);
@@ -132,11 +155,11 @@ class MTextFrame extends JFrame {
     private void loadRecentFiles() {
         String s = new String();
         try {
-            File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "recentfiles.txt");
+            File file = new File(SysConst.getPrePath() + "conf" + File.separator + "recentfiles.txt");
             Scanner scanner = new Scanner(file);
             JMenuItem mi;
             if (scanner.hasNextLine() == false) {
-                recentFiles.add(new JMenuItem(LanguageManager.getTranslatedString(23, lang)));
+                recentFiles.add(new JMenuItem(LanguageManager.getTranslationsFromFile("NoRecentFiles", lang)));
                 return;
             } else {
                 do {
@@ -150,11 +173,11 @@ class MTextFrame extends JFrame {
             }
         } catch (IOException ex) {};
     }
-
+        
     protected void loadLanguage() {
         LanguageManager lm = new LanguageManager();
         try {
-            File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "language.txt");
+            File file = new File(SysConst.getPrePath() + "conf" + File.separator + "language.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -165,12 +188,12 @@ class MTextFrame extends JFrame {
             if (l.equals("Italiano")) lang = 1;
             else if (l.equals("English")) lang = 0;
             else {
-                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslatedString(18, lang));
+                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
                 lm.actionPerformed(null);
                 loadLanguage();
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslatedString(18, lang));
+            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
             lm.actionPerformed(null);
             loadLanguage();
         }
@@ -180,7 +203,7 @@ class MTextFrame extends JFrame {
     protected void loadTabs() {
         TabSizeManager tm = new TabSizeManager();
         try {
-            File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "tabsize.txt");
+            File file = new File(SysConst.getPrePath() + "conf" + File.separator + "tabsize.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -220,12 +243,12 @@ class MTextFrame extends JFrame {
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslatedString(18, lang));
+                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
                 tm.actionPerformed(null);
                 loadTabs();
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslatedString(18, lang));
+            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
             tm.actionPerformed(null);
             loadTabs();
         }
@@ -234,7 +257,7 @@ class MTextFrame extends JFrame {
     protected void loadWrap() {
         WrapLineSetting ws = new WrapLineSetting();
         try {
-            File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "wraplines.txt");
+            File file = new File(SysConst.getPrePath() + "conf" + File.separator + "wraplines.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
@@ -261,13 +284,13 @@ class MTextFrame extends JFrame {
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslatedString(18, lang));
+                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
                 ws.actionPerformed(null);
                 loadWrap();
             }
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslatedString(18, lang));
+            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
             ws.actionPerformed(null);
             loadWrap();
         }
@@ -321,7 +344,7 @@ public class MText {
     static int theme = 0;
     public static void main(String[] args) {
         try {
-            File file = new File(SysConst.getPrePath() + "conf" + SysConst.getSlash() + "theme.txt");
+            File file = new File(SysConst.getPrePath() + "conf" + File.separator + "theme.txt");
             Scanner scanner = new Scanner(file);
             if (scanner.hasNextLine() == false) {
                 scanner.close();
@@ -351,6 +374,6 @@ public class MText {
         catch (IllegalAccessException e) {
        // handle exception
         }
-        frame = new MTextFrame();
+        frame = new MTextFrame(args);
     }
 }
