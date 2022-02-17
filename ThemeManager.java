@@ -31,7 +31,9 @@ class ThemeManager extends MText implements ActionListener {
                     e.getSource();
                     JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("RebootNeeded", frame.getLang()));
                 } catch (NullPointerException ex) {};
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+            System.out.println("[DEBUG] Error in ThemeManager.java");
+        }
             } else theme = 0;
 
         } 

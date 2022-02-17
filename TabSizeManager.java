@@ -29,7 +29,9 @@ class TabSizeManager extends MText implements ActionListener {
                 else if (s.contains("8")) br.write("8 spaces");
                 br.close();
             }
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+            System.out.println("[DEBUG] Error in TabSizeManager.java");
+        }
         frame.loadTabs();
         return;
         

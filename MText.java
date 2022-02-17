@@ -10,7 +10,7 @@ import java.util.Scanner;
 class SysConst {
     static final String system = System.getProperty("os.name");
     public static String getPrePath() {
-        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") + "\\mtext\\";
+        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext";
         else return "/etc/mtext/";
     }
     public static String getLogoPath() {
@@ -78,6 +78,8 @@ class MTextFrame extends JFrame {
                 }
                 catch(IOException ex) {
                     JOptionPane.showMessageDialog(this, LanguageManager.getTranslationsFromFile("ReadingError", lang));
+                    fileTabs[0] = new TextFilePanel(null, "none", tabSize);
+                    tPane.addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[0], null);
                 }
             }                                 
                 }
@@ -87,7 +89,7 @@ class MTextFrame extends JFrame {
 
         String[] menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
         String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
-        JMenuItem[] menuItems = new JMenuItem[13];
+        JMenuItem[] menuItems = new JMenuItem[14];
         KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
 
         JMenuBar menuBar = new JMenuBar();
@@ -137,8 +139,14 @@ class MTextFrame extends JFrame {
         menuItems[12].setActionCommand("Java info");
         menuItems[12].addActionListener(new MIListener()); 
 
+        /*menuItems[13] = new JMenuItem(menuItemLbls[13]);
+        menuItems[13].setActionCommand("Check updates");
+        menuItems[13].addActionListener(new CheckUpdates());*/
+
+        // about.add(menuItems[13]);
         about.add(menuItems[8]);
         about.add(menuItems[12]);
+        
 
         menuBar.add(file);
         menuBar.add(edit);

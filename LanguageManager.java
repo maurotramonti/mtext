@@ -29,6 +29,7 @@ class LanguageManager extends MText implements ActionListener {
         }
         catch (IOException ex) {
             JOptionPane.showMessageDialog(frame.getFrame(), getTranslationsFromFile("PermsError", lang));
+            System.out.println("[DEBUG] Error in LanguageManager.java");
             return;
         }
     }
@@ -37,12 +38,12 @@ class LanguageManager extends MText implements ActionListener {
         switch(value) {
             case 0:
                 if (true) {
-                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About MText", "Tab size", "Automatic newline", "App theme", "About Java"};
+                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About MText", "Tab size", "Automatic newline", "App theme", "About Java", "Check updates"};
                     return tmp;
                 }            
             case 3:  
                 if (true) {              
-                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Language", lang), getTranslationsFromFile("InfoAboutMText", lang), getTranslationsFromFile("TabLength", lang), getTranslationsFromFile("AutomaticNewline", lang), getTranslationsFromFile("AppTheme", lang), getTranslationsFromFile("AboutJava", lang)};
+                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Language", lang), getTranslationsFromFile("InfoAboutMText", lang), getTranslationsFromFile("TabLength", lang), getTranslationsFromFile("AutomaticNewline", lang), getTranslationsFromFile("AppTheme", lang), getTranslationsFromFile("AboutJava", lang), getTranslationsFromFile("CheckUpdates", lang)};
                     return tmp;
                 }
                 

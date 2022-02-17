@@ -28,6 +28,7 @@ class WrapLineSetting extends MText implements ActionListener {
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("PermsError", lang)); // only on Windows, because of permissions
+            System.out.println("[DEBUG] Error in WrapLinesSetting.java");
             return;
         }
         frame.loadWrap();
