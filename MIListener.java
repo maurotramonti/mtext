@@ -110,6 +110,8 @@ class MIListener extends MText implements ActionListener {
     }  
     public void readAndInsert(String path) {
         String contents = new String();
+        boolean w;
+        String wstring = "";
 
         if (frame.getLFO().equals(path) == false) {
             int lang = frame.getLang();
@@ -119,18 +121,28 @@ class MIListener extends MText implements ActionListener {
                 while(scanner.hasNextLine()) {
                     contents = contents + scanner.nextLine() + '\n';
                 }
+                if (file.canWrite() == true) {
+                    w = true;
+                    System.out.println("IL FILE È SCRIVIBILE");
+                } else {
+                    w = false;
+                    wstring = new String(LanguageManager.getTranslationsFromFile("ReadOnly", lang));
+                    System.out.println(w);
+                }
                 frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, path, /*tabSize*/4);
                 frame.getTabPane().addTab(path, null, frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1], null);
                 frame.getTabPane().setSelectedIndex(frame.getTabPane().getSelectedIndex() + 1);  
                 frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].setModified(false);
+                frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].setWritable(w);
                 scanner.close();
-                frame.getFrame().setTitle("MText - " + frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath());
+    
+                frame.getFrame().setTitle("MText - " + frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath() + wstring);
                 frame.setLFO(path);
                 BufferedWriter bw = new BufferedWriter(new FileWriter(SysConst.getPrePath() + "conf" + File.separator + "recentfiles.txt", true));
                 bw.write(path + "\n");
                 bw.close();
             }
-            catch(IOException ex) {
+            catch(IOException ex) { 
                 JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ReadingError", lang));
             }
         }                  
@@ -149,6 +161,10 @@ class MIListener extends MText implements ActionListener {
             frame.setTitle("MText - " + frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath());
         }
         catch(IOException ex) {
+            if (!(frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].isWritable())) {
+                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ReadOnlyError", lang));
+                return;
+            }
             JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("SavingError", lang));
         }                  
     }

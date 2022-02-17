@@ -10,7 +10,7 @@ import java.util.Scanner;
 class SysConst {
     static final String system = System.getProperty("os.name");
     public static String getPrePath() {
-        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext";
+        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext\\";
         else return "/etc/mtext/";
     }
     public static String getLogoPath() {

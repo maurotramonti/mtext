@@ -8,6 +8,7 @@ import javax.swing.event.*;
 class TextFilePanel extends JScrollPane {
     String filePath;
     boolean isModified = false;
+    boolean isWritable;
     TextFilePanel(String contents, String filepath, int tabSize) {
         super(new JTextArea(contents));
         filePath = new String(filepath);
@@ -25,6 +26,14 @@ class TextFilePanel extends JScrollPane {
 
     public String getFilePath() {
         return this.filePath;
+    }
+
+    public void setWritable(boolean writable) {
+        isWritable = writable;
+    }
+
+    public boolean isWritable() {
+        return this.isWritable;
     }
 
     public void setFilePath(String path) {
