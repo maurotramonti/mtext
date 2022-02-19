@@ -53,6 +53,20 @@ class MTextFrame extends JFrame {
         loadRecentFiles();
 
         sib = new SideBar(frame, lang);
+        try {
+            File fb = new File(SysConst.getPrePath() + "conf" + File.separator + "fb.txt");
+            Scanner s = new Scanner(fb);
+            String st = s.nextLine();
+            s.close();
+            if (st.equals("1")) {
+                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("Changelog", lang), "Changelog", JOptionPane.INFORMATION_MESSAGE);
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fb));
+                bw.write("0");
+                bw.close();
+            } 
+            
+        } catch (IOException ex) {}
+
         if (args.length == 0) {
             fileTabs[0] = new TextFilePanel(null, "none", tabSize);
             tPane.addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[0], null);
@@ -139,11 +153,11 @@ class MTextFrame extends JFrame {
         menuItems[12].setActionCommand("Java info");
         menuItems[12].addActionListener(new MIListener()); 
 
-        /*menuItems[13] = new JMenuItem(menuItemLbls[13]);
+        menuItems[13] = new JMenuItem(menuItemLbls[13]);
         menuItems[13].setActionCommand("Check updates");
-        menuItems[13].addActionListener(new CheckUpdates());*/
+        menuItems[13].addActionListener(new CheckUpdates());
 
-        // about.add(menuItems[13]);
+        about.add(menuItems[13]);
         about.add(menuItems[8]);
         about.add(menuItems[12]);
         
