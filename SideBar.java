@@ -62,7 +62,7 @@ class SideBar extends JPanel {
     }
 }
 
-class SideBarListener extends MIListener implements ItemListener {
+class SideBarListener extends FileMenuHandler implements ItemListener {
     static boolean active = false;
 
     public void itemStateChanged(ItemEvent e) {

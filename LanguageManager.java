@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 class LanguageManager extends MText implements ActionListener {
     private int lang;
-    private String[] langs = {"Italiano", "English"};
+    public static final String[] langs = {"Italiano", "English"};
     public void actionPerformed(ActionEvent e) { 
         lang = frame.getLang();
         String clg;
@@ -38,12 +38,12 @@ class LanguageManager extends MText implements ActionListener {
         switch(value) {
             case 0:
                 if (true) {
-                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Language", "About MText", "Tab size", "Automatic newline", "App theme", "About Java", "Check updates"};
+                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Copy", "Paste", "Language", "Tab size", "Automatic newline", "App theme", "Check updates", "About MText", "About Java"};
                     return tmp;
                 }            
             case 3:  
                 if (true) {              
-                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Language", lang), getTranslationsFromFile("InfoAboutMText", lang), getTranslationsFromFile("TabLength", lang), getTranslationsFromFile("AutomaticNewline", lang), getTranslationsFromFile("AppTheme", lang), getTranslationsFromFile("AboutJava", lang), getTranslationsFromFile("CheckUpdates", lang)};
+                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Copy", lang), getTranslationsFromFile("Paste", lang), getTranslationsFromFile("Language", lang), getTranslationsFromFile("TabLength", lang), getTranslationsFromFile("AutomaticNewline", lang), getTranslationsFromFile("AppTheme", lang), getTranslationsFromFile("CheckUpdates", lang), getTranslationsFromFile("InfoAboutMText", lang),  getTranslationsFromFile("AboutJava", lang)};
                     return tmp;
                 }
                 

@@ -33,7 +33,6 @@ class MTextFrame extends JFrame {
     private StatusBar sb;
     private SideBar sib;
     private JMenu recentFiles;
-    static MIListener x = new MIListener();
     
     MTextFrame(String[] args) {
         super("MText");
@@ -98,18 +97,21 @@ class MTextFrame extends JFrame {
             }                                 
                 }
 
-        tPane.addChangeListener(new TabChangedListener());
+        tPane.addChangeListener(new TabChangedListener());      
         
 
         String[] menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
         String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
-        JMenuItem[] menuItems = new JMenuItem[14];
-        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK)};
+        JMenuItem[] menuItems = new JMenuItem[16];
+        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
 
         JMenuBar menuBar = new JMenuBar();
         JMenu file = new JMenu("File");
-        JMenu edit = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang));
+        JMenu edit = new JMenu(LanguageManager.getTranslationsFromFile("Edit", lang));
+        JMenu preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang));
         JMenu about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
+
+/*      File menu entries cycle      */
 
         for (int i = 0; i < 7; i++) {
             menuItems[i] = new JMenuItem(menuItemLbls[i]);
@@ -118,8 +120,8 @@ class MTextFrame extends JFrame {
                 file.addSeparator();
                 file.add(recentFiles);
             }
-            menuItems[i].setActionCommand(menuItemActs[i]);
-            menuItems[i].addActionListener(new MIListener());
+            menuItems[i].setActionCommand(LanguageManager.getTranslatedStrings(0, 0)[i]);
+            menuItems[i].addActionListener(new FileMenuHandler());
             if (i == 5) {
                 file.addSeparator();
                 continue;
@@ -127,43 +129,40 @@ class MTextFrame extends JFrame {
             menuItems[i].setAccelerator(accelerators[i]);
         } 
 
-        menuItems[7] = new JMenuItem(menuItemLbls[7]);
-        edit.add(menuItems[7]);
-        menuItems[7].setAccelerator(accelerators[7]);
-        menuItems[7].addActionListener(new LanguageManager());
-        
-        menuItems[8] = new JMenuItem(menuItemLbls[8]);
-        menuItems[8].setActionCommand(menuItemActs[8]);
-        menuItems[8].addActionListener(new MIListener());
+/*    Edit menu entries cycle    */
 
-        menuItems[9] = new JMenuItem(menuItemLbls[9]);
-        edit.add(menuItems[9]);
-        menuItems[9].setAccelerator(accelerators[8]);
-        menuItems[9].addActionListener(new TabSizeManager());
+        for (int i = 7; i < 9; i++) {
+            menuItems[i] = new JMenuItem(menuItemLbls[i]);
+            edit.add(menuItems[i]);
+            menuItems[i].setActionCommand(menuItemActs[i]);
+            menuItems[i].addActionListener(new EditMenuHandler());
+            menuItems[i].setAccelerator(accelerators[i]);
+        }
 
-        menuItems[10] = new JMenuItem(menuItemLbls[10]);
-        edit.add(menuItems[10]);
-        menuItems[10].addActionListener(new WrapLineSetting());    
+/*    Preferences menu entries cycle    */
 
-        menuItems[11] = new JMenuItem(menuItemLbls[11]);
-        edit.add(menuItems[11]);
-        menuItems[11].addActionListener(new ThemeManager());   
+        for (int i = 9; i < 13; i++) {
+            menuItems[i] = new JMenuItem(menuItemLbls[i]);
+            preferences.add(menuItems[i]);
+            menuItems[i].setActionCommand(menuItemActs[i]);
+            menuItems[i].addActionListener(new PreferencesMenuHandler());
+            menuItems[i].setAccelerator(accelerators[i]);
+        } 
 
-        menuItems[12] = new JMenuItem(menuItemLbls[12]);
-        menuItems[12].setActionCommand("Java info");
-        menuItems[12].addActionListener(new MIListener()); 
+/*    About menu entries cycle    */
 
-        menuItems[13] = new JMenuItem(menuItemLbls[13]);
-        menuItems[13].setActionCommand("Check updates");
-        menuItems[13].addActionListener(new CheckUpdates());
-
-        about.add(menuItems[13]);
-        about.add(menuItems[8]);
-        about.add(menuItems[12]);
+        for (int i = 13; i < 16; i++) {
+            menuItems[i] = new JMenuItem(menuItemLbls[i]);
+            about.add(menuItems[i]);
+            menuItems[i].setActionCommand(menuItemActs[i]);
+            menuItems[i].addActionListener(new AboutMenuHandler());
+            menuItems[i].setAccelerator(accelerators[i]);
+        }
         
 
         menuBar.add(file);
         menuBar.add(edit);
+        menuBar.add(preferences);
         menuBar.add(about);
 
         frame.setJMenuBar(menuBar);
@@ -187,7 +186,7 @@ class MTextFrame extends JFrame {
                 do {
                     mi = new JMenuItem(scanner.nextLine());
                     mi.setActionCommand("Recent file");
-                    mi.addActionListener(new MIListener());
+                    mi.addActionListener(new FileMenuHandler());
                     recentFiles.add(mi);
 
                 } while (scanner.hasNextLine());
@@ -223,13 +222,13 @@ class MTextFrame extends JFrame {
     }
 
     protected void loadTabs() {
-        TabSizeManager tm = new TabSizeManager();
+        PreferencesMenuHandler pmh = new PreferencesMenuHandler();
         try {
             File file = new File(SysConst.getPrePath() + "conf" + File.separator + "tabsize.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
-                tm.actionPerformed(null);
+                pmh.tabSizeRoutine();
                 loadTabs();
             }
             l = scanner.nextLine();
@@ -266,24 +265,24 @@ class MTextFrame extends JFrame {
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-                tm.actionPerformed(null);
+                pmh.tabSizeRoutine();
                 loadTabs();
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-            tm.actionPerformed(null);
+            pmh.tabSizeRoutine();
             loadTabs();
         }
     }
 
     protected void loadWrap() {
-        WrapLineSetting ws = new WrapLineSetting();
+        PreferencesMenuHandler pmh = new PreferencesMenuHandler();
         try {
             File file = new File(SysConst.getPrePath() + "conf" + File.separator + "wraplines.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
-                ws.actionPerformed(null);
+                pmh.autoNewlineRoutine();
                 loadWrap();
             }
             l = scanner.nextLine();
@@ -307,13 +306,13 @@ class MTextFrame extends JFrame {
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-                ws.actionPerformed(null);
+                pmh.autoNewlineRoutine();
                 loadWrap();
             }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-            ws.actionPerformed(null);
+            pmh.autoNewlineRoutine();
             loadWrap();
         }
     }
@@ -370,8 +369,8 @@ public class MText {
             Scanner scanner = new Scanner(file);
             if (scanner.hasNextLine() == false) {
                 scanner.close();
-                ThemeManager tm = new ThemeManager();
-                tm.actionPerformed(null);
+                PreferencesMenuHandler pmh = new PreferencesMenuHandler();
+                pmh.themeRoutine();
                 
             } else {
                 String s = scanner.nextLine();
