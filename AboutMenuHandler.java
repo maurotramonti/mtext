@@ -1,6 +1,5 @@
 package mtext;
 
-import javax.swing.ImageIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -16,8 +15,8 @@ class AboutMenuHandler extends MText implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         lang = frame.getLang();
         if (e.getActionCommand().equals("Check updates")) {
-            final int internalVersion = 210;
-            final String internalVersionString = new String("210");
+            final int internalVersion = 220;
+            final String internalVersionString = new String("220");
             int lang = frame.getLang();
             try {
                 URL url = new URL("https://raw.githubusercontent.com/maurotramonti/mtext/main/latest.txt");
@@ -54,6 +53,7 @@ class AboutMenuHandler extends MText implements ActionListener {
                 bw.write(internalVersionString);
                 bw.close();
             } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame.getFrame(), "Error while checking upgrades", "Error", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 

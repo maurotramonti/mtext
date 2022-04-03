@@ -1,12 +1,10 @@
 package mtext;
 
-import javax.swing.ImageIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import java.util.Scanner;
-import javax.swing.filechooser.*;
 import java.io.*;
 
 class PreferencesMenuHandler extends MText implements ActionListener {

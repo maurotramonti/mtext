@@ -1,6 +1,5 @@
 package mtext;
 
-import javax.swing.ImageIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

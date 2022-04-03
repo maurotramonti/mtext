@@ -78,7 +78,7 @@ class MTextFrame extends JFrame {
                     while(scanner.hasNextLine()) {
                         contents = contents + scanner.nextLine() + '\n';
                     }
-                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, args[i], /*tabSize*/4);
+                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, args[i], tabSize);
                     getTabPane().addTab(args[i], null, getFileTabs()[getTabPane().getSelectedIndex() + 1], null);
                     getTabPane().setSelectedIndex(getTabPane().getSelectedIndex());  
                     getFileTabs()[getTabPane().getSelectedIndex()].setModified(false);
@@ -102,8 +102,8 @@ class MTextFrame extends JFrame {
 
         String[] menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
         String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
-        JMenuItem[] menuItems = new JMenuItem[16];
-        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
+        JMenuItem[] menuItems = new JMenuItem[19];
+        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
 
         JMenuBar menuBar = new JMenuBar();
         JMenu file = new JMenu("File");
@@ -131,17 +131,18 @@ class MTextFrame extends JFrame {
 
 /*    Edit menu entries cycle    */
 
-        for (int i = 7; i < 9; i++) {
+        for (int i = 7; i < 12; i++) {
             menuItems[i] = new JMenuItem(menuItemLbls[i]);
             edit.add(menuItems[i]);
             menuItems[i].setActionCommand(menuItemActs[i]);
             menuItems[i].addActionListener(new EditMenuHandler());
             menuItems[i].setAccelerator(accelerators[i]);
+            if (i == 8) edit.addSeparator();
         }
 
 /*    Preferences menu entries cycle    */
 
-        for (int i = 9; i < 13; i++) {
+        for (int i = 12; i < 16; i++) {
             menuItems[i] = new JMenuItem(menuItemLbls[i]);
             preferences.add(menuItems[i]);
             menuItems[i].setActionCommand(menuItemActs[i]);
@@ -151,7 +152,7 @@ class MTextFrame extends JFrame {
 
 /*    About menu entries cycle    */
 
-        for (int i = 13; i < 16; i++) {
+        for (int i = 16; i < 19; i++) {
             menuItems[i] = new JMenuItem(menuItemLbls[i]);
             about.add(menuItems[i]);
             menuItems[i].setActionCommand(menuItemActs[i]);
