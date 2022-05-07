@@ -2,17 +2,10 @@
 
 MText è un editor di testo basilare scritto in Java utilizzando la libreria grafica Swing.
 
-## Compilazione ed esecuzione
-
-Per compilare i sorgenti è necessario il Java Development Kit 16.
-
-    javac *.java  
-    java MText 
-
-## Installazione permanente
+## Releases
 
 Le release complete di installer per Windows sono disponibile in questo repository, così come i pacchetti Debian.
 
 ## Immagini
 
-![immagine1](https://i.ibb.co/6y5fCXC/mtext-screenshot.png")
+![immagine1](https://i.ibb.co/wN8tn6D/Immagine-2022-05-07-174809.png)
