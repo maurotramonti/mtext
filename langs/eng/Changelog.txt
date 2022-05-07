@@ -1,0 +1,6 @@
+News version 2.3
+
+ - Bug fixing
+ - Translations fixing
+ - Code improvements
+ 

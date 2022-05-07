@@ -1,0 +1,5 @@
+Novità versione 2.3
+
+ - Correzioni di bug
+ - Correzioni di traduzioni
+ - Miglioramento del codice

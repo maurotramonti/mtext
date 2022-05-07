@@ -1,0 +1,2 @@
+Si e' verificato un errore durante la verifica degli aggiornamenti,
+controlla la tua connessione internet o riprova in un secondo momento.

@@ -1,0 +1,2 @@
+An error has occurred during updates checking,
+check your internet connection or retry later.

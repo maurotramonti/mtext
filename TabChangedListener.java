@@ -10,6 +10,6 @@ class TabChangedListener extends MText implements ChangeListener {
         if ((fileTabs[frame.getTabPane().getSelectedIndex()].isWritable() == false) && fileTabs[frame.getTabPane().getSelectedIndex()].getFilePath().equals("none") == false) {
             w = new String(LanguageManager.getTranslationsFromFile("ReadOnly", frame.getLang()));
         }
-        frame.getFrame().setTitle("Mtext - " + fileTabs[frame.getTabPane().getSelectedIndex()].getFilePath() + w);
+        frame.getFrame().setTitle("MText - " + fileTabs[frame.getTabPane().getSelectedIndex()].getFilePath() + w);
     }
 }

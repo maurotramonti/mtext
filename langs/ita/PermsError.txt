@@ -1,0 +1,1 @@
+Errore: è necessario eseguire come amministratore per modificare le impostazioni

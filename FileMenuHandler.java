@@ -34,6 +34,7 @@ class FileMenuHandler extends MText implements ActionListener {
                     } else saveFile(frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath());
                 }
             }
+            frame.removeOpenedFileAt(frame.getTabPane().getSelectedIndex());
             frame.getTabPane().remove(frame.getTabPane().getSelectedIndex());
         }
         else if (e.getActionCommand().equals("New")) {
@@ -42,10 +43,13 @@ class FileMenuHandler extends MText implements ActionListener {
                 return;
             }
             TextFilePanel[] fileTabs = frame.getFileTabs();
+            int tc = frame.getTabPane().getTabCount();
+            frame.getTabPane().setSelectedIndex(tc - 1);
             fileTabs[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(null, "none", frame.getTabSize());
             frame.getTabPane().addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[frame.getTabPane().getSelectedIndex() + 1], null);
             frame.getTabPane().setSelectedIndex(frame.getTabPane().getSelectedIndex() + 1); 
             frame.getFrame().setTitle("MText - " + LanguageManager.getTranslationsFromFile("Untitled", lang)); 
+            frame.addActualOpenedFile("none", frame.getTabPane().getSelectedIndex());
         }
         else if (e.getActionCommand().equals("Open")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
@@ -56,6 +60,7 @@ class FileMenuHandler extends MText implements ActionListener {
             int r = fc.showOpenDialog(frame.getFrame());
             if (r == JFileChooser.APPROVE_OPTION) {
                 String path = fc.getSelectedFile().getAbsolutePath();
+                
                 readAndInsert(path);                
             }
         }
@@ -102,8 +107,22 @@ class FileMenuHandler extends MText implements ActionListener {
         String contents = new String();
         boolean w;
         String wstring = "";
-
-        if (frame.getLFO().equals(path) == false) {
+        boolean alreadyOpened = false;
+        String[] aof = frame.getActuallyOpenedFiles();
+        int winningIndex = -1, j = -1;
+        for (String fn : aof) {
+            j++;
+            try {
+                if (fn.equals(path)) {
+                    alreadyOpened = true;
+                    winningIndex = j;
+                }
+            } catch (NullPointerException ex) {}
+        }
+        if (alreadyOpened == true) {
+            frame.getTabPane().setSelectedIndex(winningIndex);
+        }
+        else if (alreadyOpened == false) {
             int lang = frame.getLang();
             try {
                 File file = new File(path);
@@ -113,26 +132,27 @@ class FileMenuHandler extends MText implements ActionListener {
                 }
                 if (file.canWrite() == true) {
                     w = true;
-                    System.out.println("IL FILE È SCRIVIBILE");
                 } else {
                     w = false;
                     wstring = new String(LanguageManager.getTranslationsFromFile("ReadOnly", lang));
-                    System.out.println(w);
+                    System.out.println(wstring);
                 }
-                frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, path, /*tabSize*/4);
+                int tc = frame.getTabPane().getTabCount();
+                frame.getTabPane().setSelectedIndex(tc - 1);
+                frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, path, frame.getTabSize());
                 frame.getTabPane().addTab(path, null, frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1], null);
                 frame.getTabPane().setSelectedIndex(frame.getTabPane().getSelectedIndex() + 1);  
                 frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].setModified(false);
                 frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].setWritable(w);
+                frame.addActualOpenedFile(path, frame.getTabPane().getSelectedIndex());
                 scanner.close();
     
                 frame.getFrame().setTitle("MText - " + frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getFilePath() + wstring);
-                frame.setLFO(path);
                 BufferedWriter bw = new BufferedWriter(new FileWriter(SysConst.getPrePath() + "conf" + File.separator + "recentfiles.txt", true));
                 bw.write(path + "\n");
                 bw.close();
             }
-            catch(IOException ex) { 
+            catch(Exception ex) { 
                 JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ReadingError", lang));
             }
         }                  

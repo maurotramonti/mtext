@@ -6,6 +6,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import java.io.*;
 import java.util.Scanner;
+import java.net.*;
 
 class SysConst {
     static final String system = System.getProperty("os.name");
@@ -25,14 +26,21 @@ class SysConst {
 
 class MTextFrame extends JFrame {
     private JFrame frame;
+
     private int lang, tabSize;
     private boolean lineWrap;
+
     private TextFilePanel[] fileTabs = new TextFilePanel[64];
     private JTabbedPane tPane = new JTabbedPane();
-    private String lastFileOpened = new String("");
+
     private StatusBar sb;
     private SideBar sib;
-    private JMenu recentFiles;
+
+    private JMenuBar menuBar;
+    private JMenu file, edit, preferences, about, recentFiles;
+    private String[] menuItemLbls, menuItemActs, actuallyOpenedFiles = new String[64];
+    private JMenuItem[] menuItems = new JMenuItem[19];
+    private final KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
     
     MTextFrame(String[] args) {
         super("MText");
@@ -50,6 +58,17 @@ class MTextFrame extends JFrame {
 
         recentFiles = new JMenu(LanguageManager.getTranslationsFromFile("RecentFiles", lang));
         loadRecentFiles();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(SysConst.getPrePath() + "conf" + File.separator + "lastcheck.txt"));
+            String lc = br.readLine();
+            final long millis = Long.parseLong(lc);
+            br.close();
+            if ((System.currentTimeMillis() - millis) >= 172800000) { // sono passati almeno 2 giorni
+                checkUpdates(true);
+            }
+        } catch (IOException ex) {}
+
 
         sib = new SideBar(frame, lang);
         try {
@@ -73,21 +92,35 @@ class MTextFrame extends JFrame {
             for (int i = 0; i < args.length; i++) {
                 String contents = new String();
                 try {
-                    File file = new File(args[i]);
+                    String fullfilename = new String("");
+                    if (args[i].startsWith("\'") && args[i].endsWith("\'") == false) { // verifica se l'argomento è solo un nome parziale di file (gli apici non si chiudono)
+                        fullfilename = new String(args[i]);
+                        do {
+                            fullfilename = new String(fullfilename + " " + args[i + 1]);
+                            i++;
+                            
+                        } while (fullfilename.endsWith("\'") == false);
+                        fullfilename = new String(fullfilename.replace("\'", "")); // rimuove gli apici dalla path
+                    }
+                    File file = new File(fullfilename);
                     Scanner scanner = new Scanner(file);
                     while(scanner.hasNextLine()) {
                         contents = contents + scanner.nextLine() + '\n';
                     }
-                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, args[i], tabSize);
-                    getTabPane().addTab(args[i], null, getFileTabs()[getTabPane().getSelectedIndex() + 1], null);
+                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, fullfilename, tabSize);
+                    getTabPane().addTab(fullfilename, null, getFileTabs()[getTabPane().getSelectedIndex() + 1], null);
                     getTabPane().setSelectedIndex(getTabPane().getSelectedIndex());  
                     getFileTabs()[getTabPane().getSelectedIndex()].setModified(false);
+                    File f = new File(fullfilename);
+                    getFileTabs()[getTabPane().getSelectedIndex()].setWritable(f.canWrite());
                     scanner.close();
                     setTitle("MText - " + getFileTabs()[getTabPane().getSelectedIndex()].getFilePath());
-                    setLFO(args[i]);
+                    actuallyOpenedFiles[getTabPane().getSelectedIndex()] = fullfilename;
+                    
                     BufferedWriter bw = new BufferedWriter(new FileWriter(SysConst.getPrePath() + "conf" + File.separator + "recentfiles.txt", true));
-                    bw.write(args[i] + "\n");
-                    bw.close();
+                    bw.write(fullfilename + "\n");
+                    bw.close();                 
+                    
                 }
                 catch(IOException ex) {
                     JOptionPane.showMessageDialog(this, LanguageManager.getTranslationsFromFile("ReadingError", lang));
@@ -100,16 +133,16 @@ class MTextFrame extends JFrame {
         tPane.addChangeListener(new TabChangedListener());      
         
 
-        String[] menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
-        String[] menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
-        JMenuItem[] menuItems = new JMenuItem[19];
-        KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
+        menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
+        menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
+        
+        
 
-        JMenuBar menuBar = new JMenuBar();
-        JMenu file = new JMenu("File");
-        JMenu edit = new JMenu(LanguageManager.getTranslationsFromFile("Edit", lang));
-        JMenu preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang));
-        JMenu about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
+        menuBar = new JMenuBar();
+        file = new JMenu("File");
+        edit = new JMenu(LanguageManager.getTranslationsFromFile("Edit", lang));
+        preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang));
+        about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
 
 /*      File menu entries cycle      */
 
@@ -318,6 +351,50 @@ class MTextFrame extends JFrame {
         }
     }
 
+    public void checkUpdates(boolean showOnlyIfPositive) {
+        final int internalVersion = 230;
+        final String internalVersionString = new String("230");
+        try {
+            URL url = new URL("https://raw.githubusercontent.com/maurotramonti/mtext/main/conf/latest.txt");
+
+                InputStream is = url.openStream();
+                // Stream to the destionation file
+                FileOutputStream fos = new FileOutputStream(SysConst.getPrePath() + "conf" + File.separator + "latest.txt");
+		        // Read bytes from URL to the local file
+                byte[] buffer = new byte[4096];
+                int bytesRead = 0;
+
+                System.out.println("[DEBUG] Downloading latest.txt");
+                while ((bytesRead = is.read(buffer)) != -1) {
+        	        fos.write(buffer, 0, bytesRead);
+                }
+
+                // Close destination stream
+                fos.close();
+                // Close URL stream
+                is.close();
+                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "latest.txt");
+                Scanner scanner = new Scanner(file);
+                String l = new String();
+                l = scanner.nextLine();
+                int internalVersionRead = Integer.parseInt(l);
+                System.out.println(internalVersionRead);
+                if (internalVersionRead > internalVersion) {
+                    JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("CUTxtY", lang), LanguageManager.getTranslationsFromFile("CUTtl", lang), JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    if (showOnlyIfPositive == false) JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("CUTxtN", lang), LanguageManager.getTranslationsFromFile("CUTtl", lang), JOptionPane.INFORMATION_MESSAGE);                    
+                }
+                scanner.close();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+                bw.write(internalVersionString);
+                bw.close();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("CheckUpdatesErr", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
+                return;
+            }       
+        
+    }
+
     public SideBar getSideBar() {
         return sib;
     }
@@ -334,20 +411,26 @@ class MTextFrame extends JFrame {
         return tabSize;
     }
 
-    public void setLFO(String str) {
-        lastFileOpened = new String(str);
-    }
-
-    public String getLFO() {
-        return lastFileOpened;
-    }
-
     public int getLang() {
         return lang;
     }
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    public String[] getActuallyOpenedFiles() {
+        return actuallyOpenedFiles;
+    }
+
+    public void addActualOpenedFile(String path, int index) {
+        actuallyOpenedFiles[index] = new String(path);
+        System.out.println("[DEBUG] Aggiunto file alla tabella con indice " + index + "e percorso " + path);
+    }
+
+    public void removeOpenedFileAt(int index) {
+        actuallyOpenedFiles[index] = new String("");
+        System.out.println("[DEBUG] Rimosso file dalla tabella all\'indice " + index);
     }
 
     public JTabbedPane getTabPane() {

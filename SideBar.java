@@ -59,6 +59,7 @@ class SideBar extends JPanel {
             filesList.addItem(str);
         }
         sbl.eventState(true);
+        sbl.doRoutine(filesList);
     }
 }
 
@@ -68,8 +69,12 @@ class SideBarListener extends FileMenuHandler implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
         if (active) {
             JComboBox box = (JComboBox)e.getSource();
-            readAndInsert(frame.getSideBar().getCurrentDir() + File.separator + box.getSelectedItem());
+            doRoutine(box);
         }
+    }
+
+    public void doRoutine(JComboBox box) {
+        readAndInsert(frame.getSideBar().getCurrentDir() + File.separator + box.getSelectedItem());
     }
 
     public void eventState(boolean b) {
@@ -88,7 +93,8 @@ class FNFilter implements FilenameFilter {
     public boolean accept(File dir, String fileName) {
         File file = new File(dir.getPath() + File.separator + fileName);
         if (file.isFile()) {
-            return fileName.endsWith(".txt") || fileName.endsWith(".sh") || fileName.endsWith(".java") || (!fileName.contains(".") && fileName.endsWith(""));
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".jpeg") || fileName.endsWith(".gif") || fileName.endsWith(".exe") || fileName.endsWith(".class") || fileName.endsWith(".jar")) return false;
+            else return true;
         } else return false;
     }
 }

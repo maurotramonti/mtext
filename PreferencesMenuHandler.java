@@ -48,7 +48,7 @@ class PreferencesMenuHandler extends MText implements ActionListener {
                 br.close();
             }
         } catch (IOException ex) {
-            System.out.println("[DEBUG] Error in TabSizeManager.java");
+            JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ChangeSettingsError", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
         }
         frame.loadTabs();
     }
@@ -61,7 +61,7 @@ class PreferencesMenuHandler extends MText implements ActionListener {
             } catch (NullPointerException ex) {
                 fr = null;
             }
-            String s = (String) JOptionPane.showInputDialog(fr, null, "Select theme", JOptionPane.PLAIN_MESSAGE, null, opt, opt[0]);
+            String s = (String) JOptionPane.showInputDialog(fr, null, LanguageManager.getTranslationsFromFile("ChooseTheme", lang), JOptionPane.PLAIN_MESSAGE, null, opt, opt[0]);
             if (s != null) {
                 try {
                     FileWriter fw = new FileWriter(new File(SysConst.getPrePath() + "conf" + File.separator + "theme.txt"));
@@ -74,11 +74,8 @@ class PreferencesMenuHandler extends MText implements ActionListener {
                         theme = 1;
                     }
                     br.close();
-                    try {
-                        JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("RebootNeeded", frame.getLang()));
-                    } catch (NullPointerException ex) {};
                 } catch (IOException ex) {
-                System.out.println("[DEBUG] Error in ThemeManager.java");
+                    JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ChangeSettingsError", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
                 }
             } else theme = 0;
     }
@@ -100,8 +97,7 @@ class PreferencesMenuHandler extends MText implements ActionListener {
                     br.close();
                 }
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("PermsError", lang)); // only on Windows, because of permissions
-                System.out.println("[DEBUG] Error in WrapLinesSetting.java");
+                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("ChangeSettingsError", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             frame.loadWrap();
