@@ -8,50 +8,27 @@ import javax.swing.filechooser.*;
 import java.io.*;
 import java.util.Scanner;
 
-class LanguageManager extends MText implements ActionListener {
+class LanguageManager extends MText {
+    public static final int ITALIAN = 1;
+    public static final int ENGLISH = 0;
+
     private int lang;
     public static final String[] langs = {"Italiano", "English"};
-    public void actionPerformed(ActionEvent e) { 
-        lang = frame.getLang();
-        String clg;
-        if(lang == 0) clg = new String("English");
-        else if(lang == 1) clg = new String("Italiano");
-        else clg = new String("none");
-        try {
-            String s = (String) JOptionPane.showInputDialog(frame.getFrame(), getTranslationsFromFile("ChooseLanguage", lang), getTranslationsFromFile("Warning", lang), JOptionPane.PLAIN_MESSAGE, null, langs, clg);
-            if (s != null) {
-                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "language.txt");
-                FileWriter fw = new FileWriter(file);
-                BufferedWriter br = new BufferedWriter(fw);
-                br.write(s);
-                br.close();
-            }
-        }
-        catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame.getFrame(), getTranslationsFromFile("PermsError", lang));
-            System.out.println("[DEBUG] Error in LanguageManager.java");
-            return;
-        }
-    }
+    
 
     public static String[] getTranslatedStrings(int value, int lang) {
         switch(value) {
             case 0:
                 if (true) {
-                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Undo", "Redo", "Cut", "Copy", "Paste", "Language", "Tab size", "Automatic newline", "App theme", "Check updates", "About MText", "About Java"};
+                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Undo", "Redo", "Cut", "Copy", "Paste", "Check updates", "About MText", "About Java"};
                     return tmp;
                 }            
             case 3:  
                 if (true) {              
-                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Undo", lang), getTranslationsFromFile("Redo", lang), getTranslationsFromFile("Cut", lang), getTranslationsFromFile("Copy", lang), getTranslationsFromFile("Paste", lang), getTranslationsFromFile("Language", lang), getTranslationsFromFile("TabLength", lang), getTranslationsFromFile("AutomaticNewline", lang), getTranslationsFromFile("AppTheme", lang), getTranslationsFromFile("CheckUpdates", lang), getTranslationsFromFile("InfoAboutMText", lang),  getTranslationsFromFile("AboutJava", lang)};
+                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Undo", lang), getTranslationsFromFile("Redo", lang), getTranslationsFromFile("Cut", lang), getTranslationsFromFile("Copy", lang), getTranslationsFromFile("Paste", lang), getTranslationsFromFile("CheckUpdates", lang), getTranslationsFromFile("InfoAboutMText", lang),  getTranslationsFromFile("AboutJava", lang)};
                     return tmp;
                 }
                 
-            case 1:
-                if (true) {
-                    String[] tmp = {"2 " + getTranslationsFromFile("Spaces", lang), "4 " + getTranslationsFromFile("Spaces", lang), "8 " + getTranslationsFromFile("Spaces", lang)};
-                    return tmp;
-                } 
             case 2:
                 if (true) {
                     String[] tmp = {getTranslationsFromFile("Yes", lang), getTranslationsFromFile("No", lang)};
@@ -61,6 +38,10 @@ class LanguageManager extends MText implements ActionListener {
         String[] tmp = {"none", "none"};
         return tmp;
     }
+    public static String getTranslationsFromFile(String property) {
+        return getTranslationsFromFile(property, getCurrentLang());
+    }
+
     public static String getTranslationsFromFile(String property, int lang) {
         String prefix, contents = "";
         switch (lang) {
@@ -89,9 +70,9 @@ class LanguageManager extends MText implements ActionListener {
         else if (lang == 1) return "Versione: " + System.getProperty("java.vm.version") + "\nPercorso di installazione:  " + System.getProperty("java.home") + "\nSistema operativo: " + System.getProperty("os.name");
         return "none";
     }
-    public static String getTranslatedString(int value, int lang) {
-            System.out.println("Missing translation: number " + value);
-            return "none";        
+
+    public static int getCurrentLang() {
+        return frame.getLang();
     }
     
 

@@ -15,11 +15,11 @@ class SysConst {
         else return "/etc/mtext/";
     }
     public static String getLogoPath() {
-        if (system.contains("Windows")) return "mtext.png";
+        if (system.contains("Windows")) return System.getenv("PROGRAMFILES") + "\\mtext\\mtext.png";
         else return "/usr/share/icons/mtext.png";
     }
     public static String getJavaLogoPath() {
-        if (system.contains("Windows")) return "javalogo.png";
+        if (system.contains("Windows")) return System.getenv("PROGRAMFILES") + "\\mtext\\javalogo.png";
         else return "/usr/share/icons/javalogo.png";
     }
 }
@@ -39,8 +39,8 @@ class MTextFrame extends JFrame {
     private JMenuBar menuBar;
     private JMenu file, edit, preferences, about, recentFiles;
     private String[] menuItemLbls, menuItemActs, actuallyOpenedFiles = new String[64];
-    private JMenuItem[] menuItems = new JMenuItem[19];
-    private final KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
+    private JMenuItem[] menuItems = new JMenuItem[15];
+    private final KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
     
     MTextFrame(String[] args) {
         super("MText");
@@ -141,7 +141,8 @@ class MTextFrame extends JFrame {
         menuBar = new JMenuBar();
         file = new JMenu("File");
         edit = new JMenu(LanguageManager.getTranslationsFromFile("Edit", lang));
-        preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang));
+        preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang)); JMenuItem settings = new JMenuItem(LanguageManager.getTranslationsFromFile("Settings", lang)); settings.addActionListener(new PreferencesMenuHandler()); preferences.add(settings);
+
         about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
 
 /*      File menu entries cycle      */
@@ -173,19 +174,11 @@ class MTextFrame extends JFrame {
             if (i == 8) edit.addSeparator();
         }
 
-/*    Preferences menu entries cycle    */
 
-        for (int i = 12; i < 16; i++) {
-            menuItems[i] = new JMenuItem(menuItemLbls[i]);
-            preferences.add(menuItems[i]);
-            menuItems[i].setActionCommand(menuItemActs[i]);
-            menuItems[i].addActionListener(new PreferencesMenuHandler());
-            menuItems[i].setAccelerator(accelerators[i]);
-        } 
 
 /*    About menu entries cycle    */
 
-        for (int i = 16; i < 19; i++) {
+        for (int i = 12; i < 15; i++) {
             menuItems[i] = new JMenuItem(menuItemLbls[i]);
             about.add(menuItems[i]);
             menuItems[i].setActionCommand(menuItemActs[i]);
@@ -230,96 +223,99 @@ class MTextFrame extends JFrame {
     }
         
     protected void loadLanguage() {
-        LanguageManager lm = new LanguageManager();
         try {
             File file = new File(SysConst.getPrePath() + "conf" + File.separator + "language.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
-                lm.actionPerformed(null);
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("English"); bw.close();
+                scanner.close();
                 loadLanguage();
             }
             l = scanner.nextLine();
-            if (l.equals("Italiano")) lang = 1;
-            else if (l.equals("English")) lang = 0;
+            scanner.close();
+            if (l.equals("Italiano")) lang = LanguageManager.ITALIAN;
+            else if (l.equals("English")) lang = LanguageManager.ENGLISH;
             else {
-                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-                lm.actionPerformed(null);
+                String[] langs = {"English", "Italiano"};
+                String s = (String) JOptionPane.showInputDialog(frame, LanguageManager.getTranslationsFromFile("ChooseLanguage", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.PLAIN_MESSAGE, null, langs, 0);
+                if (s != null) {
+
+                    FileWriter fw = new FileWriter(file);
+                    BufferedWriter br = new BufferedWriter(fw);
+                    br.write(s);
+                    br.close();
+                } else {                    
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+                    bw.write("English"); bw.close();                    
+                }
                 loadLanguage();
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-            lm.actionPerformed(null);
-            loadLanguage();
+            try {
+                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "language.txt");
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("English"); bw.close();
+                loadLanguage();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
         }
         sb.setSbLanguage(lang);
     }
 
     protected void loadTabs() {
-        PreferencesMenuHandler pmh = new PreferencesMenuHandler();
         try {
             File file = new File(SysConst.getPrePath() + "conf" + File.separator + "tabsize.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
-                pmh.tabSizeRoutine();
+                scanner.close();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+                bw.write("4");
+                bw.close();                
                 loadTabs();
             }
             l = scanner.nextLine();
-            if (l.equals("2 spaces")) {
-                tabSize = 2;
-                sb.setSbTabSize(tabSize);
-                for(TextFilePanel tp : fileTabs) {
-                    try {
-                        tp.getTextArea().setTabSize(2);
-                    } catch (NullPointerException ex) {
-                        return;
-                    }
+            
+            tabSize = Integer.parseInt(l);
+            sb.setSbTabSize(tabSize);
+            for(TextFilePanel tp : fileTabs) {
+                try {
+                    tp.getTextArea().setTabSize(2);
+                } catch (NullPointerException ex) {
+                    return;
                 }
-            } else if (l.equals("4 spaces")) {
-                tabSize = 4;
-                sb.setSbTabSize(tabSize);
-                for(TextFilePanel tp : fileTabs) {
-                    try {
-                        tp.getTextArea().setTabSize(4);
-                    } catch (NullPointerException ex) {
-                        return;
-                    }
-                }
-            }
-            else if (l.equals("8 spaces")) {
-                tabSize = 8;
-                sb.setSbTabSize(tabSize);
-                for(TextFilePanel tp : fileTabs) {
-                    try {
-                        tp.getTextArea().setTabSize(8);
-                    } catch (NullPointerException ex) {
-                        return;
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-                pmh.tabSizeRoutine();
-                loadTabs();
-            }
+            }   
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-            pmh.tabSizeRoutine();
-            loadTabs();
+            try {
+                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "tabsize.txt");
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+                bw.write("4");
+                bw.close();  
+                loadTabs(); 
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+                
+            
         }
     }
 
     protected void loadWrap() {
-        PreferencesMenuHandler pmh = new PreferencesMenuHandler();
         try {
             File file = new File(SysConst.getPrePath() + "conf" + File.separator + "wraplines.txt");
             Scanner scanner = new Scanner(file);
             String l = new String();
             if (scanner.hasNextLine() == false) {
-                pmh.autoNewlineRoutine();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("No"); bw.close();
+                scanner.close();
                 loadWrap();
             }
             l = scanner.nextLine();
+            scanner.close();
             if (l.equals("Yes")) {
                 lineWrap = true;
                 for(TextFilePanel tp : fileTabs) {
@@ -340,20 +336,26 @@ class MTextFrame extends JFrame {
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-                pmh.autoNewlineRoutine();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("No"); bw.close();
                 loadWrap();
             }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang));
-            pmh.autoNewlineRoutine();
-            loadWrap();
+            try {
+                File file = new File(SysConst.getPrePath() + "conf" + File.separator + "wraplines.txt");
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("No"); bw.close();
+                loadWrap();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            
         }
     }
 
     public void checkUpdates(boolean showOnlyIfPositive) {
-        final int internalVersion = 230;
-        final String internalVersionString = new String("230");
+        final int internalVersion = 240;
+        final String internalVersionString = new String("240");
         try {
             URL url = new URL("https://raw.githubusercontent.com/maurotramonti/mtext/main/conf/latest.txt");
 
@@ -387,6 +389,10 @@ class MTextFrame extends JFrame {
                 scanner.close();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(file));
                 bw.write(internalVersionString);
+                bw.close();
+                File lastcheckfile = new File(SysConst.getPrePath() + "conf" + File.separator + "lastcheck.txt");
+                bw = new BufferedWriter(new FileWriter(lastcheckfile));
+                bw.write(Long.toString(System.currentTimeMillis()));
                 bw.close();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("CheckUpdatesErr", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
@@ -453,32 +459,18 @@ public class MText {
             Scanner scanner = new Scanner(file);
             if (scanner.hasNextLine() == false) {
                 scanner.close();
-                PreferencesMenuHandler pmh = new PreferencesMenuHandler();
-                pmh.themeRoutine();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("Cross-Platform"); bw.close();
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                
+
                 
             } else {
                 String s = scanner.nextLine();
-                if (s.equals("0")) theme = 0;
-                else if (s.equals("1")) theme = 1;
+                if (s.equals("Cross-Platform")) UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                else if (s.equals("System")) UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 scanner.close();
             }
-        } catch (IOException ex) {}
-        try {
-            if (theme == 0) UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            else if (theme == 1) UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (UnsupportedLookAndFeelException e) {
-       // handle exception
-        }
-        catch (ClassNotFoundException e) {
-       // handle exception
-        }
-        catch (InstantiationException e) {
-       // handle exception
-        }
-        catch (IllegalAccessException e) {
-       // handle exception
-        }
+        } catch (Exception ex) {}
         frame = new MTextFrame(args);
     }
 }

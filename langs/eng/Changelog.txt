@@ -1,6 +1,4 @@
-News version 2.3
+News version 2.4
 
- - Bug fixing
- - Translations fixing
- - Code improvements
+ - New dialog window for settings
  

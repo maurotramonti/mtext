@@ -1,5 +1,4 @@
-Novità versione 2.3
+Novità versione 2.4
 
- - Correzioni di bug
- - Correzioni di traduzioni
- - Miglioramento del codice
+ - Nuova finestra di dialogo per le impostazioni
+  

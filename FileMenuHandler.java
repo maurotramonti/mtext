@@ -14,7 +14,7 @@ class FileMenuHandler extends MText implements ActionListener {
         lang = frame.getLang();
         if (e.getActionCommand().equals("Recent file")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
-                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslatedString(11, lang));
+                JOptionPane.showMessageDialog(frame.getFrame(), LanguageManager.getTranslationsFromFile("TooManyTabs"));
                 return;
             }
             JMenuItem mi = (JMenuItem)e.getSource();
