@@ -29,6 +29,7 @@ class TAListener extends MText implements DocumentListener {
             }
 
             current.addToHistory(current.getTextArea().getText());
+            current.getLineCounter().setLineCount(current.getTextArea().getLineCount());
         }
     }
 }

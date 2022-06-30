@@ -12,31 +12,21 @@ class LanguageManager extends MText {
     public static final int ITALIAN = 1;
     public static final int ENGLISH = 0;
 
+    public static final int MI_ACTS = 0;
+    public static final int MI_LBLS = 1;
+
     private int lang;
     public static final String[] langs = {"Italiano", "English"};
     
 
-    public static String[] getTranslatedStrings(int value, int lang) {
-        switch(value) {
-            case 0:
-                if (true) {
-                    String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Undo", "Redo", "Cut", "Copy", "Paste", "Check updates", "About MText", "About Java"};
-                    return tmp;
-                }            
-            case 3:  
-                if (true) {              
-                    String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Undo", lang), getTranslationsFromFile("Redo", lang), getTranslationsFromFile("Cut", lang), getTranslationsFromFile("Copy", lang), getTranslationsFromFile("Paste", lang), getTranslationsFromFile("CheckUpdates", lang), getTranslationsFromFile("InfoAboutMText", lang),  getTranslationsFromFile("AboutJava", lang)};
-                    return tmp;
-                }
-                
-            case 2:
-                if (true) {
-                    String[] tmp = {getTranslationsFromFile("Yes", lang), getTranslationsFromFile("No", lang)};
-                    return tmp;
-                }
+    public static String[] getMenuItemsInfo(int typeOfInfo, int lang) {
+        if (typeOfInfo == MI_ACTS) {
+            String[] tmp = {"Close", "New", "Open", "Open folder", "Save", "Save as...", "Exit", "Undo", "Redo", "Cut", "Copy", "Paste", "Check updates", "About MText", "About Java"};           
+            return tmp;
+        } else {              
+            String[] tmp = {getTranslationsFromFile("Close", lang), getTranslationsFromFile("New", lang), getTranslationsFromFile("Open", lang), getTranslationsFromFile("OpenFolder", lang), getTranslationsFromFile("Save", lang), getTranslationsFromFile("SaveAs", lang), getTranslationsFromFile("Exit", lang), getTranslationsFromFile("Undo", lang), getTranslationsFromFile("Redo", lang), getTranslationsFromFile("Cut", lang), getTranslationsFromFile("Copy", lang), getTranslationsFromFile("Paste", lang), getTranslationsFromFile("CheckUpdates", lang), getTranslationsFromFile("InfoAboutMText", lang),  getTranslationsFromFile("AboutJava", lang)};
+            return tmp;
         }
-        String[] tmp = {"none", "none"};
-        return tmp;
     }
     public static String getTranslationsFromFile(String property) {
         return getTranslationsFromFile(property, getCurrentLang());
@@ -62,7 +52,9 @@ class LanguageManager extends MText {
                 contents = contents + s.nextLine() + '\n';
             } while (s.hasNextLine());
             s.close();
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(frame.getFrame(), "Missing translation: " + property + ".txt", getTranslationsFromFile("Warning"), JOptionPane.ERROR_MESSAGE);
+        }
         return contents;
     }
     public static String getJavaVersionString(int lang) {

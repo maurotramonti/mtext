@@ -1,4 +1,6 @@
-Novità versione 2.4
+Novità versione 2.5
 
- - Nuova finestra di dialogo per le impostazioni
-  
+ - Aggiunti i temi colori!
+ - Nuova finestra di dialogo per la personalizzazione
+ - Correzioni di bug
+ - Miglioramento del codice

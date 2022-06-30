@@ -10,7 +10,9 @@ import java.io.*;
 
 class FileMenuHandler extends MText implements ActionListener {
     int lang;
+    Color lcbg, lcfg, ftbg, ftfg;
     public void actionPerformed(ActionEvent e) {
+        lcbg = frame.lcbg; lcfg = frame.lcfg; ftbg = frame.ftbg; ftfg = frame.ftfg;
         lang = frame.getLang();
         if (e.getActionCommand().equals("Recent file")) {
             if (frame.getTabPane().getSelectedIndex() == 63) {
@@ -45,7 +47,7 @@ class FileMenuHandler extends MText implements ActionListener {
             TextFilePanel[] fileTabs = frame.getFileTabs();
             int tc = frame.getTabPane().getTabCount();
             frame.getTabPane().setSelectedIndex(tc - 1);
-            fileTabs[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(null, "none", frame.getTabSize());
+            fileTabs[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(null, "none", frame.getTabSize(), frame.getLineCounterVisibility(), ftbg, ftfg, lcbg, lcfg);
             frame.getTabPane().addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[frame.getTabPane().getSelectedIndex() + 1], null);
             frame.getTabPane().setSelectedIndex(frame.getTabPane().getSelectedIndex() + 1); 
             frame.getFrame().setTitle("MText - " + LanguageManager.getTranslationsFromFile("Untitled", lang)); 
@@ -99,8 +101,7 @@ class FileMenuHandler extends MText implements ActionListener {
             }
         }
         else if (e.getActionCommand().equals("Exit")) {
-            CustomWindowListener cwl = new CustomWindowListener();
-            cwl.windowClosing(null);
+            frame.windowClosing(null);
         }
     }
     public void readAndInsert(String path) {
@@ -139,7 +140,7 @@ class FileMenuHandler extends MText implements ActionListener {
                 }
                 int tc = frame.getTabPane().getTabCount();
                 frame.getTabPane().setSelectedIndex(tc - 1);
-                frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, path, frame.getTabSize());
+                frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, path, frame.getTabSize(), frame.getLineCounterVisibility(), ftbg, ftfg, lcbg, lcfg);
                 frame.getTabPane().addTab(path, null, frame.getFileTabs()[frame.getTabPane().getSelectedIndex() + 1], null);
                 frame.getTabPane().setSelectedIndex(frame.getTabPane().getSelectedIndex() + 1);  
                 frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].setModified(false);

@@ -1,0 +1,2 @@
+Error: theme name mustn't be empty or contain one of these charatchers:
+< > ? : / \ " ' .

@@ -1,2 +1,2 @@
-MText 2.4 (build 160622)
+MText 2.5 (build 300622)
 Author: Mauro Tramonti

@@ -1,0 +1,2 @@
+Errore: il nome del tema non può essere vuoto o contenere uno dei seguenti caratteri:
+< > ? : / \ " ' .

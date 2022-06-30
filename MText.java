@@ -11,7 +11,7 @@ import java.net.*;
 class SysConst {
     static final String system = System.getProperty("os.name");
     public static String getPrePath() {
-        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext\\";
+        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext\\"; 
         else return "/etc/mtext/";
     }
     public static String getLogoPath() {
@@ -24,11 +24,15 @@ class SysConst {
     }
 }
 
-class MTextFrame extends JFrame {
+class MTextFrame extends JFrame implements WindowListener {
     private JFrame frame;
 
+    private String currentThemeName;
+
     private int lang, tabSize;
-    private boolean lineWrap;
+    private boolean lineWrap, globalLineCounterVisibility;
+
+    protected Color lcbg, lcfg = Color.black, ftbg, ftfg = Color.black;
 
     private TextFilePanel[] fileTabs = new TextFilePanel[64];
     private JTabbedPane tPane = new JTabbedPane();
@@ -36,25 +40,29 @@ class MTextFrame extends JFrame {
     private StatusBar sb;
     private SideBar sib;
 
-    private JMenuBar menuBar;
+    private JMenuBar menuBar = new JMenuBar();
     private JMenu file, edit, preferences, about, recentFiles;
     private String[] menuItemLbls, menuItemActs, actuallyOpenedFiles = new String[64];
     private JMenuItem[] menuItems = new JMenuItem[15];
     private final KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
+
     
     MTextFrame(String[] args) {
         super("MText");
         frame = this;
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new CustomWindowListener());
+        frame.addWindowListener(this);
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage(SysConst.getLogoPath()));
 
         sb = new StatusBar(frame);
 
+
         loadLanguage();
         loadTabs();
         loadWrap();
+        loadAppearance();
+        
 
         recentFiles = new JMenu(LanguageManager.getTranslationsFromFile("RecentFiles", lang));
         loadRecentFiles();
@@ -86,7 +94,7 @@ class MTextFrame extends JFrame {
         } catch (IOException ex) {}
 
         if (args.length == 0) {
-            fileTabs[0] = new TextFilePanel(null, "none", tabSize);
+            fileTabs[0] = new TextFilePanel(null, "none", tabSize, true, ftbg, ftfg, lcbg, lcfg);
             tPane.addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[0], null);
         } else {
             for (int i = 0; i < args.length; i++) {
@@ -107,7 +115,7 @@ class MTextFrame extends JFrame {
                     while(scanner.hasNextLine()) {
                         contents = contents + scanner.nextLine() + '\n';
                     }
-                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, fullfilename, tabSize);
+                    getFileTabs()[getTabPane().getSelectedIndex() + 1] = new TextFilePanel(contents, fullfilename, tabSize, true, ftbg, ftfg, lcbg, lcfg);
                     getTabPane().addTab(fullfilename, null, getFileTabs()[getTabPane().getSelectedIndex() + 1], null);
                     getTabPane().setSelectedIndex(getTabPane().getSelectedIndex());  
                     getFileTabs()[getTabPane().getSelectedIndex()].setModified(false);
@@ -124,25 +132,24 @@ class MTextFrame extends JFrame {
                 }
                 catch(IOException ex) {
                     JOptionPane.showMessageDialog(this, LanguageManager.getTranslationsFromFile("ReadingError", lang));
-                    fileTabs[0] = new TextFilePanel(null, "none", tabSize);
+                    fileTabs[0] = new TextFilePanel(null, "none", tabSize, true, ftbg, ftfg, lcbg, lcfg);
                     tPane.addTab(LanguageManager.getTranslationsFromFile("Untitled", lang), null, fileTabs[0], null);
                 }
             }                                 
                 }
-
-        tPane.addChangeListener(new TabChangedListener());      
+        tPane.addChangeListener(new TabChangedListener());    
         
 
-        menuItemLbls = LanguageManager.getTranslatedStrings(3, lang);
-        menuItemActs = LanguageManager.getTranslatedStrings(0, 0);
+        menuItemLbls = LanguageManager.getMenuItemsInfo(LanguageManager.MI_LBLS, lang);
+        menuItemActs = LanguageManager.getMenuItemsInfo(LanguageManager.MI_ACTS, 0);
         
         
-
-        menuBar = new JMenuBar();
         file = new JMenu("File");
         edit = new JMenu(LanguageManager.getTranslationsFromFile("Edit", lang));
-        preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang)); JMenuItem settings = new JMenuItem(LanguageManager.getTranslationsFromFile("Settings", lang)); settings.addActionListener(new PreferencesMenuHandler()); preferences.add(settings);
-
+        preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang)); 
+        JMenuItem settings = new JMenuItem(LanguageManager.getTranslationsFromFile("Settings", lang)); settings.setActionCommand("Settings"); settings.addActionListener(new PreferencesMenuHandler()); preferences.add(settings); settings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK));
+        JMenuItem appearance = new JMenuItem(LanguageManager.getTranslationsFromFile("Appearance", lang)); appearance.setActionCommand("Appearance"); appearance.addActionListener(new PreferencesMenuHandler()); preferences.add(appearance); appearance.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        
         about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
 
 /*      File menu entries cycle      */
@@ -154,7 +161,7 @@ class MTextFrame extends JFrame {
                 file.addSeparator();
                 file.add(recentFiles);
             }
-            menuItems[i].setActionCommand(LanguageManager.getTranslatedStrings(0, 0)[i]);
+            menuItems[i].setActionCommand(menuItemActs[i]);
             menuItems[i].addActionListener(new FileMenuHandler());
             if (i == 5) {
                 file.addSeparator();
@@ -196,6 +203,7 @@ class MTextFrame extends JFrame {
 
         frame.add(tPane);
         frame.add(sb, BorderLayout.SOUTH);
+
 
         frame.setVisible(true);
     }
@@ -283,7 +291,7 @@ class MTextFrame extends JFrame {
             sb.setSbTabSize(tabSize);
             for(TextFilePanel tp : fileTabs) {
                 try {
-                    tp.getTextArea().setTabSize(2);
+                    tp.getTextArea().setTabSize(tabSize);
                 } catch (NullPointerException ex) {
                     return;
                 }
@@ -354,8 +362,8 @@ class MTextFrame extends JFrame {
     }
 
     public void checkUpdates(boolean showOnlyIfPositive) {
-        final int internalVersion = 240;
-        final String internalVersionString = new String("240");
+        final int internalVersion = 250;
+        final String internalVersionString = new String("250");
         try {
             URL url = new URL("https://raw.githubusercontent.com/maurotramonti/mtext/main/conf/latest.txt");
 
@@ -401,6 +409,146 @@ class MTextFrame extends JFrame {
         
     }
 
+    private void loadTheme(String name) {
+        File themeFile = new File(SysConst.getPrePath() + "themes" + File.separator + name + ".txt");
+        try {
+            Scanner scanner = new Scanner(themeFile);
+            String s = scanner.nextLine();
+            String[] rgb = s.split(";");
+            lcbg = new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+            for (TextFilePanel fp : fileTabs) {
+                try {
+                    fp.getLineCounter().setBackground(lcbg);
+                } catch (NullPointerException e) {
+                    break;
+                }
+            }
+            
+
+            // status bar color
+
+            s = scanner.nextLine();
+            rgb = s.split(";");
+            sb.setBackground(new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
+            
+            // text background
+
+            s = scanner.nextLine();
+            rgb = s.split(";");
+
+            ftbg = new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+
+            for (TextFilePanel fp : fileTabs) {
+                try {
+                    fp.getTextArea().setBackground(ftbg);
+                    fp.getInternalPanel().setBackground(ftbg);
+                } catch (NullPointerException ex) {
+                    break;
+                }
+            }
+
+            
+            
+
+            // menubar background
+
+            s = scanner.nextLine();
+            rgb = s.split(";");
+
+            menuBar.setBackground(new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
+            tPane.setBackground(menuBar.getBackground()); tPane.setOpaque(true);
+            // veryfing if white text is set
+
+            // line counter
+
+            if (scanner.nextLine().equals("1")) {
+                lcfg = Color.white;
+            } else lcfg = Color.black;
+
+            for (TextFilePanel fp : fileTabs) {
+                try {
+                    fp.getLineCounter().setForeground(lcfg);
+                } catch (NullPointerException ex) {
+                    break;
+                }
+            }
+
+            // status bar
+            if (scanner.nextLine().equals("1")) {
+                sb.setForeground(Color.white);
+            } else sb.setForeground(Color.black);
+
+            // text color
+
+            if (scanner.nextLine().equals("1")) ftfg = Color.white;
+            else ftfg = Color.black;
+
+            for (TextFilePanel fp : fileTabs) {
+                try {
+                    fp.setForeground(ftfg);
+                } catch (NullPointerException ex) {
+                    break;
+                }
+            }
+            
+            setThemeName(name);
+            sb.setThemeName(name);
+            scanner.close();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void loadAppearance() {
+        File conffile = new File(SysConst.getPrePath() + "conf" + File.separator + "appearance.txt");
+        try {
+            Scanner s = new Scanner(conffile);
+            String themeName = s.nextLine();
+
+            loadTheme(themeName);
+
+            if (s.nextLine().equals("1")) {
+                globalLineCounterVisibility = true;
+                for (TextFilePanel fp : fileTabs) {
+                    try {
+                        fp.getLineCounter().setVisible(true);
+                    } catch (NullPointerException ex) {
+                        break;
+                    }
+                }
+            } else {
+                globalLineCounterVisibility = false;
+                for (TextFilePanel fp : fileTabs) {
+                    try {
+                        fp.getLineCounter().setVisible(false);
+                    } catch (NullPointerException ex) {
+                        break;
+                    }
+                }
+            }
+
+            if (s.nextLine().equals("1")) sb.setVisible(true);
+            else sb.setVisible(false);
+
+            s.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(frame, LanguageManager.getTranslationsFromFile("SettingFileError", lang), LanguageManager.getTranslationsFromFile("Warning", lang), JOptionPane.ERROR_MESSAGE);
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(conffile));
+                bw.write("Basic\n1\n1");
+                bw.close();
+            } catch (IOException ex2) {}
+        }
+    }
+
+    public void setThemeName(String name) {
+        currentThemeName = name;
+    }
+
+    public String getThemeName() {
+        return currentThemeName;
+    }
+
     public SideBar getSideBar() {
         return sib;
     }
@@ -431,12 +579,10 @@ class MTextFrame extends JFrame {
 
     public void addActualOpenedFile(String path, int index) {
         actuallyOpenedFiles[index] = new String(path);
-        System.out.println("[DEBUG] Aggiunto file alla tabella con indice " + index + "e percorso " + path);
     }
 
     public void removeOpenedFileAt(int index) {
         actuallyOpenedFiles[index] = new String("");
-        System.out.println("[DEBUG] Rimosso file dalla tabella all\'indice " + index);
     }
 
     public JTabbedPane getTabPane() {
@@ -446,13 +592,62 @@ class MTextFrame extends JFrame {
     public TextFilePanel[] getFileTabs() {
         return fileTabs;
     }
+
+    public boolean getLineCounterVisibility() {
+        return globalLineCounterVisibility;
+    }
+
+    // Custom window listener
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        boolean aFileModified = false;
+        for (TextFilePanel tp : fileTabs) {
+            try {
+                if (tp.getIfIsModified()) {
+                    aFileModified = true;
+                    break;
+                }
+            } catch(NullPointerException ex) {
+                break;
+            }
+        }
+        if (aFileModified) {
+            int r = JOptionPane.showConfirmDialog(frame, LanguageManager.getTranslationsFromFile("SomeFilesUnsaved"), LanguageManager.getTranslationsFromFile("Warning"), JOptionPane.YES_NO_OPTION);
+            if (r == JOptionPane.YES_OPTION) return;
+            else if (r == JOptionPane.NO_OPTION) System.exit(0);
+        }
+        System.exit(0);
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {}
+
+    @Override
+    public void windowActivated(WindowEvent e) {}
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {}
+
+    @Override
+    public void windowIconified(WindowEvent e) {}
+
+    @Override
+    public void windowClosed(WindowEvent e) {}
+
+    @Override
+    public void windowOpened(WindowEvent e) {}
+
 }
 
     
 
 public class MText {
-    static MTextFrame frame;
-    static int theme = 0;
+    public static final int SYSTEM_THEME = 0; public static final int CROSS_PLATFORM_THEME = 1;
+    
+    protected static MTextFrame frame;
+    protected static int theme = 0;
+    
     public static void main(String[] args) {
         try {
             File file = new File(SysConst.getPrePath() + "conf" + File.separator + "theme.txt");
@@ -460,14 +655,19 @@ public class MText {
             if (scanner.hasNextLine() == false) {
                 scanner.close();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(file)); bw.write("Cross-Platform"); bw.close();
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());          
 
                 
             } else {
                 String s = scanner.nextLine();
-                if (s.equals("Cross-Platform")) UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                else if (s.equals("System")) UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                if (s.equals("Cross-Platform")) {
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    theme = CROSS_PLATFORM_THEME;
+                }
+                else if (s.equals("System")) {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    theme = SYSTEM_THEME;
+                }
                 scanner.close();
             }
         } catch (Exception ex) {}

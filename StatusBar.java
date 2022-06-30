@@ -6,7 +6,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import javax.swing.text.*;
 
-class CustomCaretListener extends MText implements CaretListener {
+class LineColumnTracker extends MText implements CaretListener {
     public void caretUpdate (CaretEvent e) {
         JTextArea txt = (JTextArea)e.getSource();
 
@@ -25,11 +25,14 @@ class CustomCaretListener extends MText implements CaretListener {
 
 class StatusBar extends JLabel {
     static int lang, tabsize, col, row;
+    private String tn = new String("ciaoo");
     public StatusBar(JFrame master) {
         super("Loading...", SwingConstants.RIGHT);
         super.setPreferredSize(new Dimension(master.getWidth(), 23));
         col = 1;
         row = 1;
+        this.setOpaque(true);
+        this.setForeground(Color.black);
     }
     public void setSbTabSize(int tabSize) {
         tabsize = tabSize;
@@ -47,14 +50,19 @@ class StatusBar extends JLabel {
         setStatusMessage();
     }
 
+    public void setThemeName(String name) {
+        tn = name;
+        setStatusMessage();
+    }
+
     private void setStatusMessage() {
         String msg = new String("");
-        if (lang == 0) msg = new String("Language: English");
-        else if (lang == 1) msg = new String("Lingua: Italiano");
+        if (lang == 0) msg = new String(LanguageManager.getTranslationsFromFile("ColorTheme", lang) + tn + "        Language: English");
+        else if (lang == 1) msg = new String(LanguageManager.getTranslationsFromFile("ColorTheme", lang) + tn + "        Lingua: Italiano");
 
         msg = new String(msg + "      " + LanguageManager.getTranslationsFromFile("TabSizeSetting", lang) + tabsize + " " +  LanguageManager.getTranslationsFromFile("Spaces", lang));
         msg = new String(msg + "        " + LanguageManager.getTranslationsFromFile("Row", lang) + row + " " + LanguageManager.getTranslationsFromFile("Column", lang) + col);
 
-        setText(" " + msg);
+        setText("   " + msg);
     }
 }

@@ -1,4 +1,7 @@
-News version 2.4
+News version 2.5
 
- - New dialog window for settings
+ - Added color themes!
+ - New personalization dialog!
+ - Bug fixing
+ - Code improvements
  

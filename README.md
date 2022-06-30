@@ -8,4 +8,4 @@ Le release complete di installer per Windows sono disponibile in questo reposito
 
 ## Immagini
 
-![immagine1](https://i.ibb.co/wN8tn6D/Immagine-2022-05-07-174809.png)
+![immagine1]("https://i.ibb.co/wN8tn6D/Immagine-2022-05-07-174809.png")

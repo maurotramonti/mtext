@@ -5,13 +5,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+import java.util.Scanner;
+import java.io.*;
 
 
 class SettingsDialog extends JDialog {
     private JPanel contents, buttons;
-    private SubmitButton submit;
+
+    private JDialog dialog;
+
+    private SettingsDialog.ConfirmButton confirm;
     private CancelButton cancel;
-    int lang = LanguageManager.getCurrentLang();
+
+    private final int lang = LanguageManager.getCurrentLang();
 
     private String[] settingsLabels = {new String(LanguageManager.getTranslationsFromFile("Language", lang)), new String(LanguageManager.getTranslationsFromFile("AutomaticNewline")), new String(LanguageManager.getTranslationsFromFile("TabLength")), new String(LanguageManager.getTranslationsFromFile("AppTheme"))};
 
@@ -21,16 +27,17 @@ class SettingsDialog extends JDialog {
 
 
 
-    SettingsDialog(JFrame parent, String[] arrayToPutResults) {
+    SettingsDialog(JFrame parent, boolean wraplines, int tabsize, int theme) {
         super(parent, LanguageManager.getTranslationsFromFile("Settings"), true);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
 
+        dialog = this;
+
         buttons = new JPanel(new FlowLayout()); buttons.setBackground(Color.white);
         contents = new JPanel(new GridBagLayout()); contents.setBackground(Color.white);
-        GridBagConstraints gbc = new GridBagConstraints();
-
         
+        GridBagConstraints gbc = new GridBagConstraints();       
 
         gbc.gridx = 0; gbc.ipady = 10;  gbc.ipadx = 7;
 
@@ -48,15 +55,15 @@ class SettingsDialog extends JDialog {
         radioButtons[0] = new JRadioButton(LanguageManager.getTranslationsFromFile("Yes")); radioButtons[1] = new JRadioButton("No");    
         ButtonGroup group1 = new ButtonGroup(); group1.add(radioButtons[0]); group1.add(radioButtons[1]);
 
-        if (arrayToPutResults[1].equals("Yes")) radioButtons[0].setSelected(true);
+        if (wraplines) radioButtons[0].setSelected(true);
         else radioButtons[1].setSelected(true);
 
         String[] spacesInterval = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        tabLength = new JSpinner(new SpinnerNumberModel(Integer.parseInt(arrayToPutResults[2]), 1, 8, 1));
+        tabLength = new JSpinner(new SpinnerNumberModel(tabsize, 1, 8, 1));
         
         radioButtons[2] = new JRadioButton(LanguageManager.getTranslationsFromFile("CrossPlatform")); radioButtons[3] = new JRadioButton(LanguageManager.getTranslationsFromFile("System"));
         
-        if (arrayToPutResults[3].equals("System")) radioButtons[3].setSelected(true);
+        if (theme == MText.SYSTEM_THEME) radioButtons[3].setSelected(true);
         else radioButtons[2].setSelected(true);
         
         ButtonGroup group2 = new ButtonGroup(); group2.add(radioButtons[2]); group2.add(radioButtons[3]);
@@ -90,15 +97,11 @@ class SettingsDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 3; gbc.ipady = 12; gbc.anchor = GridBagConstraints.PAGE_END;
         contents.add(new JLabel("<html><i>" + LanguageManager.getTranslationsFromFile("SettingsDialogWarning") + "</i></html>"), gbc);
 
-        submit = new SubmitButton(this, arrayToPutResults, radioButtons, langChooser, tabLength);
-        submit.setActionCommand("Submit"); submit.addActionListener(new DialogButtonsHandler());
+        confirm = new SettingsDialog.ConfirmButton();
 
         cancel = new CancelButton(this);
-        cancel.setActionCommand("Cancel"); cancel.addActionListener(new DialogButtonsHandler());
 
-        buttons.add(cancel); buttons.add(submit);
-
-
+        buttons.add(cancel); buttons.add(confirm);
 
         contents.setBorder(new EmptyBorder(10, 10, 4, 10));
         this.setLayout(new BorderLayout());
@@ -106,68 +109,49 @@ class SettingsDialog extends JDialog {
         this.pack();
         this.setVisible(true);
     }
-}
+    class ConfirmButton extends JButton implements ActionListener {
+        ConfirmButton() {
+            super(LanguageManager.getTranslationsFromFile("Confirm"));
+            addActionListener(this);
+        }
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String s = new String();
 
-// Buttons
+            try {
 
-class CancelButton extends JButton {
-    JDialog parentDialog;
-    CancelButton(JDialog pd) {
-        super("Annulla");
-        parentDialog = pd;
-    }
+                if (langChooser.getSelectedIndex() == LanguageManager.ITALIAN) s = "Italiano";
+                else if (langChooser.getSelectedIndex() == LanguageManager.ENGLISH) s = "English";
 
-}
+                BufferedWriter bw = new BufferedWriter(new FileWriter(new File(SysConst.getPrePath() + "conf" + File.separator + "language.txt"))); bw.write(s); bw.close();
 
-class SubmitButton extends JButton {
-    JDialog parentDialog;
-    JRadioButton[] radioButtons;
-    JComboBox langChooser;
-    JSpinner tabLength;
-    String[] passedResultsArray;
-    SubmitButton(JDialog pd, String[] pra, JRadioButton[] rb, JComboBox lc, JSpinner tl) {
-        super("Fine");
-        parentDialog = pd;
-        passedResultsArray = pra;
-        radioButtons = rb;
-        tabLength = tl;
-        langChooser = lc;
-    }
-}
+                if (radioButtons[0].isSelected()) s = new String("Yes");
+                else if (radioButtons[1].isSelected()) s = new String("No");
+        
+                bw = new BufferedWriter(new FileWriter(new File(SysConst.getPrePath() + "conf" + File.separator + "wraplines.txt"))); bw.write(s); bw.close();
 
-// Event handlers
+                s = new String(Integer.toString((Integer) tabLength.getValue()));
 
-class DialogButtonsHandler implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Cancel")) {
-            CancelButton c = (CancelButton) e.getSource();
-            c.parentDialog.dispose();
-        } else if (e.getActionCommand().equals("Submit")) {
-            SubmitButton s = (SubmitButton) e.getSource();
-            String[] pra = s.passedResultsArray;
-            JComboBox langChooser = s.langChooser;
-            JSpinner tabLength = s.tabLength;
-            JRadioButton[] radioButtons = s.radioButtons;
+                bw = new BufferedWriter(new FileWriter(new File(SysConst.getPrePath() + "conf" + File.separator + "tabsize.txt"))); bw.write(s); bw.close();
 
-            pra[4] = "true";
+                if (radioButtons[2].isSelected()) s = new String("Cross-Platform");
+                else if (radioButtons[3].isSelected()) s = new String("System");
 
-            if (langChooser.getSelectedIndex() == LanguageManager.ITALIAN) pra[0] = "Italiano";
-            else if (langChooser.getSelectedIndex() == LanguageManager.ENGLISH) pra[0] = "English";
-
-            if (radioButtons[0].isSelected()) pra[1] = "Yes";
-            else if (radioButtons[1].isSelected()) pra[1] = "No";
-
-            pra[2] = Integer.toString((Integer) tabLength.getValue());
-
-            if (radioButtons[2].isSelected()) pra[3] = "Cross-Platform";
-            else if (radioButtons[3].isSelected()) pra[3] = "System";
-
- 
-            
-
-            s.parentDialog.dispose();
+                bw = new BufferedWriter(new FileWriter(new File(SysConst.getPrePath() + "conf" + File.separator + "theme.txt"))); bw.write(s); bw.close();         
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            dialog.dispose();
 
         }
+    
     }
 }
+
+
+
+
+
+
+
