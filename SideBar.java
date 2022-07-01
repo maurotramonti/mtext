@@ -11,7 +11,7 @@ class SideBar extends JPanel {
     JLabel lbl;
     JButton closeSidebar;
     String[] filesPaths = {"No directory opened"};
-    JComboBox filesList = new JComboBox(filesPaths);
+    JComboBox<String> filesList = new JComboBox<>(filesPaths);
     SideBarListener sbl = new SideBarListener();
     SideBar(JFrame master, int lang) {
         super();

@@ -18,7 +18,7 @@ class AppearanceDialog extends JDialog {
 
     private AppearanceDialog.RemoveThemeButton dtb = new AppearanceDialog.RemoveThemeButton();
 
-    private JComboBox colorThemeChooser;
+    private JComboBox<String> colorThemeChooser;
     private JCheckBox showLineCount, showStatusBar;
 
     private String[] choices = new String[16];
@@ -43,7 +43,7 @@ class AppearanceDialog extends JDialog {
         contents.add(new JLabel(LanguageManager.getTranslationsFromFile("ColorTheme")), gbc);
         
         
-        colorThemeChooser = new JComboBox(choices); colorThemeChooser.setSelectedItem(parent.getThemeName());
+        colorThemeChooser = new JComboBox<>(choices); colorThemeChooser.setSelectedItem(parent.getThemeName());
         updateThemeList();
 
         gbc.gridx = 1; 
@@ -100,6 +100,8 @@ class AppearanceDialog extends JDialog {
 
         if (choices.length > 1) dtb.setEnabled(true);
         else dtb.setEnabled(false);
+
+        colorThemeChooser.setSelectedItem(parent.currentThemeName);
         
     }
 

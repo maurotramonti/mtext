@@ -11,7 +11,7 @@ import java.net.*;
 class SysConst {
     static final String system = System.getProperty("os.name");
     public static String getPrePath() {
-        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext\\"; 
+        if (system.contains("Windows")) return System.getenv("LOCALAPPDATA") +  "\\mtext\\";
         else return "/etc/mtext/";
     }
     public static String getLogoPath() {
@@ -27,12 +27,12 @@ class SysConst {
 class MTextFrame extends JFrame implements WindowListener {
     private JFrame frame;
 
-    private String currentThemeName;
+    protected String currentThemeName;
 
     private int lang, tabSize;
     private boolean lineWrap, globalLineCounterVisibility;
 
-    protected Color lcbg, lcfg = Color.black, ftbg, ftfg = Color.black;
+    protected Color lcbg, lcfg, ftbg, ftfg;
 
     private TextFilePanel[] fileTabs = new TextFilePanel[64];
     private JTabbedPane tPane = new JTabbedPane();
@@ -44,6 +44,7 @@ class MTextFrame extends JFrame implements WindowListener {
     private JMenu file, edit, preferences, about, recentFiles;
     private String[] menuItemLbls, menuItemActs, actuallyOpenedFiles = new String[64];
     private JMenuItem[] menuItems = new JMenuItem[15];
+    private JMenuItem settings, appearance;
     private final KeyStroke[] accelerators = {KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), null, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), null, null, null, null, null};
 
     
@@ -147,8 +148,8 @@ class MTextFrame extends JFrame implements WindowListener {
         file = new JMenu("File");
         edit = new JMenu(LanguageManager.getTranslationsFromFile("Edit", lang));
         preferences = new JMenu(LanguageManager.getTranslationsFromFile("Preferences", lang)); 
-        JMenuItem settings = new JMenuItem(LanguageManager.getTranslationsFromFile("Settings", lang)); settings.setActionCommand("Settings"); settings.addActionListener(new PreferencesMenuHandler()); preferences.add(settings); settings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK));
-        JMenuItem appearance = new JMenuItem(LanguageManager.getTranslationsFromFile("Appearance", lang)); appearance.setActionCommand("Appearance"); appearance.addActionListener(new PreferencesMenuHandler()); preferences.add(appearance); appearance.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        settings = new JMenuItem(LanguageManager.getTranslationsFromFile("Settings", lang)); settings.setActionCommand("Settings"); settings.addActionListener(new PreferencesMenuHandler()); preferences.add(settings); settings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK));
+        appearance = new JMenuItem(LanguageManager.getTranslationsFromFile("Appearance", lang)); appearance.setActionCommand("Appearance"); appearance.addActionListener(new PreferencesMenuHandler()); preferences.add(appearance); appearance.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
         
         about = new JMenu(LanguageManager.getTranslationsFromFile("Help", lang));
 
@@ -192,6 +193,8 @@ class MTextFrame extends JFrame implements WindowListener {
             menuItems[i].addActionListener(new AboutMenuHandler());
             menuItems[i].setAccelerator(accelerators[i]);
         }
+
+        loadAppearance();
         
 
         menuBar.add(file);
@@ -362,8 +365,8 @@ class MTextFrame extends JFrame implements WindowListener {
     }
 
     public void checkUpdates(boolean showOnlyIfPositive) {
-        final int internalVersion = 250;
-        final String internalVersionString = new String("250");
+        final int internalVersion = 251;
+        final String internalVersionString = new String("251");
         try {
             URL url = new URL("https://raw.githubusercontent.com/maurotramonti/mtext/main/conf/latest.txt");
 
@@ -445,9 +448,7 @@ class MTextFrame extends JFrame implements WindowListener {
                 } catch (NullPointerException ex) {
                     break;
                 }
-            }
-
-            
+            }            
             
 
             // menubar background
@@ -484,11 +485,35 @@ class MTextFrame extends JFrame implements WindowListener {
             else ftfg = Color.black;
 
             for (TextFilePanel fp : fileTabs) {
-                try {
-                    fp.setForeground(ftfg);
-                } catch (NullPointerException ex) {
-                    break;
+                if (fp == null) continue;
+                    fp.getTextArea().setForeground(ftfg);
+            }
+
+            // menubar text
+
+            Color mbcol;
+
+            if (scanner.nextLine().equals("1")) mbcol = Color.white;
+            else mbcol = Color.black;
+
+            for (JMenuItem mi : menuItems) {
+                if (mi == null) continue;
+                mi.setForeground(mbcol);
+                mi.setBackground(menuBar.getBackground());
+            }
+            if (recentFiles != null || about != null) {
+                recentFiles.setBackground(menuBar.getBackground()); recentFiles.setForeground(mbcol); recentFiles.setOpaque(true);
+                //JMenuItem[] me = (JMenuItem) recentFiles.getMenuComponents();
+                for (Component mi : recentFiles.getMenuComponents()) {
+                    mi.setForeground(mbcol);
+                    mi.setBackground(menuBar.getBackground());
                 }
+
+                settings.setForeground(mbcol); settings.setBackground(menuBar.getBackground());
+                appearance.setForeground(mbcol); appearance.setBackground(menuBar.getBackground());
+
+                about.setForeground(mbcol); file.setForeground(mbcol); preferences.setForeground(mbcol); edit.setForeground(mbcol);
+
             }
             
             setThemeName(name);

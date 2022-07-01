@@ -21,7 +21,7 @@ class SettingsDialog extends JDialog {
 
     private String[] settingsLabels = {new String(LanguageManager.getTranslationsFromFile("Language", lang)), new String(LanguageManager.getTranslationsFromFile("AutomaticNewline")), new String(LanguageManager.getTranslationsFromFile("TabLength")), new String(LanguageManager.getTranslationsFromFile("AppTheme"))};
 
-    private JComboBox langChooser;
+    private JComboBox<String> langChooser;
     private JRadioButton[] radioButtons = new JRadioButton[4];
     private JSpinner tabLength;
 
@@ -47,7 +47,7 @@ class SettingsDialog extends JDialog {
         }
 
         String[] langs = {new String("English"), new String("Italiano")};
-        langChooser = new JComboBox(langs);
+        langChooser = new JComboBox<>(langs);
 
         if (LanguageManager.getCurrentLang() == LanguageManager.ITALIAN) langChooser.setSelectedIndex(1);
         else langChooser.setSelectedIndex(0); 

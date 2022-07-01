@@ -1,2 +1,2 @@
-MText 2.5 (build 300622)
+MText 2.5.1 (build 010722)
 Autore: Mauro Tramonti

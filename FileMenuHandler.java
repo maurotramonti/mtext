@@ -20,7 +20,7 @@ class FileMenuHandler extends MText implements ActionListener {
                 return;
             }
             JMenuItem mi = (JMenuItem)e.getSource();
-            readAndInsert(mi.getLabel());
+            readAndInsert(mi.getText());
         }
         else if (e.getActionCommand().equals("Close")) {
             if (frame.getFileTabs()[frame.getTabPane().getSelectedIndex()].getIfIsModified()) {
